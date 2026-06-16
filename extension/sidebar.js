@@ -42,7 +42,13 @@ function applyProfileToSettings() {
 // ── Settings panel ─────────────────────────────────────────────
 
 document.getElementById("settings-btn").addEventListener("click", toggleSettings);
+document.getElementById("save-settings-btn").addEventListener("click", saveSettings);
+document.getElementById("close-settings-btn").addEventListener("click", toggleSettings);
 document.getElementById("import-file").addEventListener("change", handleImport);
+document.getElementById("send-btn").addEventListener("click", sendMessage);
+document.querySelectorAll(".suggestion").forEach(btn => {
+  btn.addEventListener("click", () => sendSuggestion(btn));
+});
 
 function toggleSettings() {
   document.getElementById("settings-panel").classList.toggle("hidden");
