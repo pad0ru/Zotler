@@ -21,6 +21,16 @@ let profile = {
   setupInput();
 })();
 
+// Auto-refresh when the converter tab saves a new profile
+chrome.storage.onChanged.addListener((changes) => {
+  if (changes.profile) {
+    profile = { ...profile, ...changes.profile.newValue };
+    applyProfileToSettings();
+    showProfileSummary();
+    showImportStatus(`${profile.courses.length} courses loaded from converter`);
+  }
+});
+
 function applyProfileToSettings() {
   const majorMap = {
     "Computer Science B.S.": "cs",
@@ -42,6 +52,9 @@ function applyProfileToSettings() {
 // ── Settings panel ─────────────────────────────────────────────
 
 document.getElementById("settings-btn").addEventListener("click", toggleSettings);
+document.getElementById("open-converter-btn").addEventListener("click", () => {
+  chrome.tabs.create({ url: chrome.runtime.getURL("converter.html") });
+});
 document.getElementById("save-settings-btn").addEventListener("click", saveSettings);
 document.getElementById("close-settings-btn").addEventListener("click", toggleSettings);
 document.getElementById("import-file").addEventListener("change", handleImport);

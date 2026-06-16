@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Zotler — Transcript Converter</title>
+  <link rel="stylesheet" href="converter.css" />
+  <script src="lib/pdf.min.js"></script>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="icons/icon48.png" alt="Zotler" class="logo-img" />
+      <span class="logo-text">Zotler</span>
+      <span class="logo-sub">Transcript Converter</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- Step 1: Upload -->
+    <section id="step-upload" class="card">
+      <h2>Import Your Unofficial Transcript</h2>
+      <p class="sub">Your PDF is processed entirely on your device — nothing is uploaded anywhere.</p>
+
+      <div class="upload-area" id="upload-area">
+        <input type="file" id="pdf-input" accept=".pdf" style="display:none" />
+        <div class="upload-icon">📄</div>
+        <p>Drag &amp; drop your UCI unofficial transcript PDF</p>
+        <p class="small">or</p>
+        <label for="pdf-input" class="btn-primary" style="cursor:pointer;">Choose PDF</label>
+        <p class="hint">Go to student.uci.edu → Student Records → View Unofficial Transcript → Print to PDF</p>
+      </div>
+
+      <div id="progress-wrap" class="hidden">
+        <p id="progress-label" class="progress-label">Parsing page 1…</p>
+        <div class="progress-track"><div id="progress-bar"></div></div>
+      </div>
+    </section>
+
+    <!-- Step 2: Review -->
+    <section id="step-review" class="card hidden">
+      <div class="review-header">
+        <div>
+          <h2>Review Your Courses</h2>
+          <p class="sub">Remove any rows that shouldn't be imported, then save to Zotler.</p>
+        </div>
+        <div id="stats"></div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Course ID</th>
+              <th>Course Name</th>
+              <th>Units</th>
+              <th>Grade</th>
+              <th>Quarter</th>
+              <th>Year</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="course-tbody"></tbody>
+        </table>
+      </div>
+
+      <div class="action-row">
+        <button id="back-btn" class="btn-ghost">← Try Another PDF</button>
+        <button id="export-btn" class="btn-outline">⬇ Export CSV</button>
+        <button id="save-btn" class="btn-primary">✓ Save to Zotler</button>
+      </div>
+    </section>
+
+    <!-- Step 3: Done -->
+    <section id="step-done" class="card hidden">
+      <div class="done-icon">✅</div>
+      <h2>Saved to Zotler!</h2>
+      <p class="sub" id="done-msg"></p>
+      <p class="sub">Go back to the Zotler sidebar and ask away — your course history is loaded.</p>
+      <button id="close-btn" class="btn-primary">Close This Tab</button>
+    </section>
+  </main>
+
+  <script src="converter.js"></script>
+</body>
+</html>

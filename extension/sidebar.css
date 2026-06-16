@@ -83,6 +83,26 @@ header {
 }
 .field select:focus { border-color: var(--uci-light); }
 
+.btn-converter {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 100%;
+  background: linear-gradient(135deg, var(--uci-blue) 0%, var(--uci-light) 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  text-align: left;
+}
+.btn-converter:hover { opacity: 0.88; }
+.converter-sub { font-size: 11px; font-weight: 400; opacity: 0.75; }
+
 .import-row { display: flex; align-items: center; gap: 8px; }
 .import-hint { font-size: 12px; color: var(--text-sub); }
 
