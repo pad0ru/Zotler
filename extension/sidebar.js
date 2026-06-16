@@ -1,4 +1,4 @@
-// ZotPlanner Sidebar — prototype with hardcoded mock responses
+// Zotler Sidebar — prototype with hardcoded mock responses
 
 // ── State ──────────────────────────────────────────────────────
 

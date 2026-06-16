@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "ZotPlanner — UCI AI Academic Planner",
-  "short_name": "ZotPlanner",
+  "name": "Zotler — UCI AI Academic Planner",
+  "short_name": "Zotler",
   "version": "0.2.0",
   "description": "AI-powered academic planning assistant for UCI students. Ask questions about your degree, majors, minors, and graduation timeline.",
   "icons": {
@@ -10,7 +10,7 @@
     "128": "icons/icon128.png"
   },
   "action": {
-    "default_title": "Open ZotPlanner",
+    "default_title": "Open Zotler",
     "default_icon": { "16": "icons/icon16.png", "48": "icons/icon48.png" }
   },
   "side_panel": {

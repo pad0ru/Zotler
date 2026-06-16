@@ -1,4 +1,4 @@
-// ZotPlanner — companion website JS
+// Zotler — companion website JS
 // Handles transcript parsing (PDF.js), manual entry, and CSV/JSON export.
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
@@ -163,7 +163,7 @@ async function parsePDF(file) {
     }
 
     if (found.length === 0) {
-      console.warn("ZotPlanner: No courses matched. Reconstructed lines:");
+      console.warn("Zotler: No courses matched. Reconstructed lines:");
       debugLines.forEach((l, i) => console.warn(`  [${i}] ${l}`));
       showToast("No courses detected. Open DevTools (F12 -> Console) to see extracted text.");
     } else {
@@ -173,7 +173,7 @@ async function parsePDF(file) {
     }
 
   } catch (err) {
-    console.error("ZotPlanner PDF error:", err);
+    console.error("Zotler PDF error:", err);
     showToast(`PDF error: ${err.message || err}. Try adding courses manually.`);
   }
 }
@@ -300,8 +300,8 @@ function exportJSON() {
                               .reduce((s,c) => s + (+c.units||0), 0),
     },
   };
-  download("zotplanner_profile.json", JSON.stringify(payload, null, 2), "application/json");
-  showToast("Downloaded zotplanner_profile.json");
+  download("zotler_profile.json", JSON.stringify(payload, null, 2), "application/json");
+  showToast("Downloaded zotler_profile.json");
 }
 
 function download(filename, content, type) {

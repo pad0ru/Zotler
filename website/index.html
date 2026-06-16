@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ZotPlanner — UCI Academic Planner Setup</title>
+  <title>Zotler — UCI Academic Planner Setup</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </head>
@@ -12,7 +12,7 @@
     <div class="header-inner">
       <div class="logo">
         <span class="logo-icon">📚</span>
-        <span class="logo-text">ZotPlanner</span>
+        <span class="logo-text">Zotler</span>
       </div>
       <p class="tagline">UCI AI Academic Planner — Profile Setup</p>
     </div>
@@ -50,7 +50,7 @@
         <button class="btn-primary" onclick="document.getElementById('file-input').click()">
           Choose File
         </button>
-        <p class="small hint">Accepts: UCI unofficial transcript PDF, or a previously exported ZotPlanner CSV</p>
+        <p class="small hint">Accepts: UCI unofficial transcript PDF, or a previously exported Zotler CSV</p>
       </div>
 
       <div class="divider">— or enter courses manually —</div>
@@ -142,13 +142,13 @@
     <!-- Step 3: Export -->
     <section class="card hidden" id="step-3">
       <h2>Export Your Profile</h2>
-      <p class="sub">Download your academic profile and import it into the ZotPlanner Chrome Extension.</p>
+      <p class="sub">Download your academic profile and import it into the Zotler Chrome Extension.</p>
 
       <div class="export-options">
         <div class="export-card" onclick="exportCSV()">
           <div class="export-icon">📊</div>
           <h3>Download CSV</h3>
-          <p>user_courses.csv — import directly into the ZotPlanner extension</p>
+          <p>user_courses.csv — import directly into the Zotler extension</p>
           <button class="btn-primary">Download CSV</button>
         </div>
         <div class="export-card" onclick="exportJSON()">
@@ -162,7 +162,7 @@
       <div class="import-instructions">
         <h3>How to import into the extension:</h3>
         <ol>
-          <li>Click the ZotPlanner icon in your Chrome toolbar to open the sidebar.</li>
+          <li>Click the Zotler icon in your Chrome toolbar to open the sidebar.</li>
           <li>Click <strong>Import Profile</strong> in the sidebar settings.</li>
           <li>Select the <code>user_courses.csv</code> you just downloaded.</li>
           <li>The extension will load your course history and you can start chatting!</li>
@@ -177,7 +177,7 @@
   </main>
 
   <footer>
-    <p>ZotPlanner Prototype — UCI ICS · <a href="#">Privacy</a> · Data never leaves your device</p>
+    <p>Zotler Prototype — UCI ICS · <a href="#">Privacy</a> · Data never leaves your device</p>
   </footer>
 
   <script src="app.js"></script>

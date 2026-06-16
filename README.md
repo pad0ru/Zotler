@@ -1,4 +1,4 @@
-# ZotPlanner — UCI AI Academic Planner
+# Zotler — UCI AI Academic Planner
 
 An AI-powered academic planning assistant for UCI students, built as a Chrome Extension with a companion website. Ask natural-language questions about your degree, explore major/minor options, and generate a graduation timeline — all from your browser.
 
@@ -12,7 +12,7 @@ A 3-step onboarding flow hosted locally:
 
 1. **Import Transcript** — upload your UCI unofficial transcript PDF or drag-and-drop it. Parsing runs entirely in-browser via PDF.js; nothing leaves your device.
 2. **Review Courses** — editable table of all parsed courses with grade pills, status badges, and remove buttons. Manual course entry form as a fallback.
-3. **Export Profile** — download a `user_courses.csv` or `zotplanner_profile.json` to import into the extension.
+3. **Export Profile** — download a `user_courses.csv` or `zotler_profile.json` to import into the extension.
 
 The PDF parser reconstructs lines from PDF.js positioned text items (grouped by Y coordinate), then works backwards through each line's token list to extract: `TITLE | DEPT CODE | COURSE NUM | UNITS | GRADE | GRADE POINTS`. Handles the `I & C SCI` multi-token department code for ICS courses.
 
@@ -83,7 +83,7 @@ python3 -m http.server 8765
 1. Open `chrome://extensions`
 2. Enable **Developer mode**
 3. Click **Load unpacked** → select the `extension/` folder
-4. Click the ZotPlanner icon in the toolbar to open the sidebar
+4. Click the Zotler icon in the toolbar to open the sidebar
 
 **Python Scraper:**
 ```bash
