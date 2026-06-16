@@ -52,7 +52,21 @@
       </div>
 
       <div class="setting-section">
-        <label>Import Profile (user_courses.csv)</label>
+        <label>Import Transcript (PDF)</label>
+        <div class="import-row">
+          <input type="file" id="import-pdf" accept=".pdf" style="display:none" />
+          <label for="import-pdf" class="btn-outline" style="cursor:pointer;">
+            📄 Upload Transcript
+          </label>
+          <span id="pdf-status" class="import-hint">No transcript loaded</span>
+        </div>
+        <div id="pdf-progress" class="pdf-progress hidden">
+          <div id="pdf-progress-bar"></div>
+        </div>
+      </div>
+
+      <div class="setting-section">
+        <label>Import CSV / JSON</label>
         <div class="import-row">
           <input type="file" id="import-file" accept=".csv,.json" style="display:none" />
           <label for="import-file" class="btn-outline" style="cursor:pointer;">
@@ -112,6 +126,7 @@
     </button>
   </div>
 
+  <script src="lib/pdf.min.js"></script>
   <script src="sidebar.js"></script>
 </body>
 </html>
