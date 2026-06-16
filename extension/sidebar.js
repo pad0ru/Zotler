@@ -88,13 +88,13 @@ function handleImport(e) {
 }
 
 function parseCSV(text) {
-  const lines  = text.trim().split("\n");
-  const header = lines[0].split(",").map(h => h.trim());
+  const lines  = text.trim().split(/\r?\n/);
+  const header = lines[0].split(",").map(h => h.replace(/\r/g, "").trim());
   return lines.slice(1)
     .map(line => {
       const vals = line.split(",");
       const obj  = {};
-      header.forEach((h, i) => { obj[h] = (vals[i] || "").trim(); });
+      header.forEach((h, i) => { obj[h] = (vals[i] || "").replace(/\r/g, "").trim(); });
       return obj;
     })
     .filter(c => c.course_id);

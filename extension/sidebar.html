@@ -54,10 +54,10 @@
       <div class="setting-section">
         <label>Import Profile (user_courses.csv)</label>
         <div class="import-row">
-          <input type="file" id="import-file" accept=".csv,.json" hidden />
-          <button class="btn-outline" onclick="document.getElementById('import-file').click()">
+          <input type="file" id="import-file" accept=".csv,.json" style="display:none" />
+          <label for="import-file" class="btn-outline" style="cursor:pointer;">
             📂 Choose File
-          </button>
+          </label>
           <span id="import-status" class="import-hint">No file loaded</span>
         </div>
       </div>
