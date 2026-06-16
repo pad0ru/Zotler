@@ -1,0 +1,12 @@
+course_id,course_name,units,grade,quarter,year,status,satisfies_req_id,gpa_points
+ICS 31,Introduction to Programming,4,A,Fall,2023,completed,ICS-LD-01,16.0
+ICS 32,Programming with Software Libraries,4,B+,Winter,2024,completed,ICS-LD-02,13.2
+ICS 6B,Boolean Logic and Discrete Structures,4,A-,Winter,2024,completed,ICS-LD-06,14.8
+MATH 2A,Single-Variable Calculus I,4,B,Fall,2023,completed,MATH-01,12.0
+MATH 2B,Single-Variable Calculus II,4,B+,Winter,2024,completed,MATH-02,13.2
+ICS 33,Intermediate Programming,4,A,Spring,2024,completed,ICS-LD-03,16.0
+ICS 6D,Discrete Mathematics for Computer Science,4,B+,Spring,2024,completed,ICS-LD-07,13.2
+ICS 45C,Data Structures Implementation and Analysis with C++,4,,Fall,2024,in_progress,,
+ICS 46,Data Structures,4,,Winter,2025,planned,,
+ICS 139W,Critical Writing on Technology,4,,Spring,2025,planned,ICS-UD-01,
+ICS 161,Design and Analysis of Algorithms,4,,Fall,2025,planned,ICS-UD-02,

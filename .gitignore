@@ -1,0 +1,8 @@
+scraper/.env
+__pycache__/
+*.pyc
+node_modules/
+.DS_Store
+data/user_courses_real.csv
+data/current_schedule.csv
+data/catalogue_courses.csv

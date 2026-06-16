@@ -1,0 +1,47 @@
+req_id,program_type,program_name,category,course_id,course_name,units,prerequisites,is_required,req_group,alternatives,notes
+ICS-LD-01,major,Computer Science B.S.,Lower Division,ICS 31,Introduction to Programming,4,,TRUE,LD-Core,,
+ICS-LD-02,major,Computer Science B.S.,Lower Division,ICS 32,Programming with Software Libraries,4,ICS 31,TRUE,LD-Core,,
+ICS-LD-03,major,Computer Science B.S.,Lower Division,ICS 33,Intermediate Programming,4,ICS 32,TRUE,LD-Core,,
+ICS-LD-04,major,Computer Science B.S.,Lower Division,ICS 45C,Data Structures with C++,4,"ICS 32, ICS 33",TRUE,LD-Core,ICS 45J,45J counts for Java track
+ICS-LD-05,major,Computer Science B.S.,Lower Division,ICS 46,Data Structures,4,ICS 45C or ICS 45J,TRUE,LD-Core,,
+ICS-LD-06,major,Computer Science B.S.,Lower Division,ICS 6B,Boolean Logic and Discrete Structures,4,,TRUE,LD-Math,,
+ICS-LD-07,major,Computer Science B.S.,Lower Division,ICS 6D,Discrete Mathematics for CS,4,,TRUE,LD-Math,,
+ICS-LD-08,major,Computer Science B.S.,Lower Division,ICS 6N,Numerical Analysis,4,,FALSE,LD-Math,MATH 3A,Choose one of ICS 6N or MATH 3A
+ICS-LD-09,major,Computer Science B.S.,Lower Division,MATH 2A,Single-Variable Calculus I,4,,TRUE,LD-Math,,
+ICS-LD-10,major,Computer Science B.S.,Lower Division,MATH 2B,Single-Variable Calculus II,4,MATH 2A,TRUE,LD-Math,,
+MATH-01,major,Computer Science B.S.,Math/Science,MATH 2A,Single-Variable Calculus I,4,,TRUE,Math,,Satisfies GE VII
+MATH-02,major,Computer Science B.S.,Math/Science,MATH 2B,Single-Variable Calculus II,4,MATH 2A,TRUE,Math,,
+STATS-01,major,Computer Science B.S.,Math/Science,STATS 67,Introduction to Probability and Statistics,4,,TRUE,Math/Science,,Or STATS 120A
+ICS-UD-01,major,Computer Science B.S.,Upper Division Core,ICS 139W,Critical Writing on Technology,4,Writing GE,TRUE,UD-Core,,Junior standing required
+ICS-UD-02,major,Computer Science B.S.,Upper Division Core,ICS 161,Design and Analysis of Algorithms,4,"ICS 46, ICS 6D",TRUE,UD-Core,,
+ICS-UD-03,major,Computer Science B.S.,Upper Division Core,ICS 162,Formal Languages and Automata Theory,4,"ICS 46, ICS 6B",TRUE,UD-Core,,
+ICS-UD-04,major,Computer Science B.S.,Upper Division Core,ICS 171,Introduction to Artificial Intelligence,4,ICS 161,TRUE,UD-Core,,
+ICS-UD-05,major,Computer Science B.S.,Upper Division Core,ICS 193,Senior Design Project,4,ICS 139W + senior standing,TRUE,UD-Core,,Two-quarter sequence: 193 + 194
+ICS-UD-06,major,Computer Science B.S.,Upper Division Core,ICS 194,Senior Design Project (cont.),4,ICS 193,TRUE,UD-Core,,
+ICS-UD-07,major,Computer Science B.S.,Upper Division Core,ICS 163,Graph Algorithms,4,ICS 161,TRUE,UD-Core,,
+ICS-UDE-01,major,Computer Science B.S.,Upper Division Elective,ICS 111,Computer Organization,4,ICS 46,FALSE,UD-Elective,,Choose 4 UD electives from ICS or CS courses
+ICS-UDE-02,major,Computer Science B.S.,Upper Division Elective,ICS 121,Software Engineering,4,ICS 46,FALSE,UD-Elective,,
+ICS-UDE-03,major,Computer Science B.S.,Upper Division Elective,ICS 122,Human-Computer Interaction,4,ICS 46,FALSE,UD-Elective,,
+ICS-UDE-04,major,Computer Science B.S.,Upper Division Elective,ICS 125,Project in AI,4,ICS 171,FALSE,UD-Elective,,
+ICS-UDE-05,major,Computer Science B.S.,Upper Division Elective,ICS 131,Social Analysis of Computerization,4,,FALSE,UD-Elective,,
+ICS-UDE-06,major,Computer Science B.S.,Upper Division Elective,ICS 143,Operating Systems,4,"ICS 46, ICS 111",FALSE,UD-Elective,,
+ICS-UDE-07,major,Computer Science B.S.,Upper Division Elective,ICS 151,Mobile Computing,4,ICS 46,FALSE,UD-Elective,,
+ICS-UDE-08,major,Computer Science B.S.,Upper Division Elective,ICS 153,Introduction to Computer Security,4,ICS 46,FALSE,UD-Elective,,
+ICS-UDE-09,major,Computer Science B.S.,Upper Division Elective,ICS 172,Introduction to Machine Learning,4,ICS 171,FALSE,UD-Elective,,
+ICS-UDE-10,major,Computer Science B.S.,Upper Division Elective,ICS 175,Computer Game Development,4,ICS 46,FALSE,UD-Elective,,
+ICS-UDE-11,major,Computer Science B.S.,Upper Division Elective,ICS 183,Introduction to Cryptography,4,"ICS 6B, MATH 2B",FALSE,UD-Elective,,
+ICS-UDE-12,major,Computer Science B.S.,Upper Division Elective,ICS 184,Database Systems,4,ICS 46,FALSE,UD-Elective,,
+CS-MIN-01,minor,Computer Science Minor,Core,ICS 31,Introduction to Programming,4,,TRUE,Minor-Core,,
+CS-MIN-02,minor,Computer Science Minor,Core,ICS 32,Programming with Software Libraries,4,ICS 31,TRUE,Minor-Core,,
+CS-MIN-03,minor,Computer Science Minor,Core,ICS 33,Intermediate Programming,4,ICS 32,TRUE,Minor-Core,,
+CS-MIN-04,minor,Computer Science Minor,Core,ICS 45C,Data Structures with C++,4,"ICS 32, ICS 33",TRUE,Minor-Core,ICS 45J,
+CS-MIN-05,minor,Computer Science Minor,Core,ICS 46,Data Structures,4,ICS 45C or ICS 45J,TRUE,Minor-Core,,
+CS-MIN-06,minor,Computer Science Minor,Upper Division,ICS 161,Design and Analysis of Algorithms,4,"ICS 46, ICS 6D",TRUE,Minor-UD,,
+CS-MIN-07,minor,Computer Science Minor,Upper Division,,Choose 2 UD ICS electives,8,varies,FALSE,Minor-UD-Elective,,Any upper division ICS course
+DS-MIN-01,minor,Data Science Minor,Core,ICS 31,Introduction to Programming,4,,TRUE,DS-Minor-Core,,
+DS-MIN-02,minor,Data Science Minor,Core,ICS 32,Programming with Software Libraries,4,ICS 31,TRUE,DS-Minor-Core,,
+DS-MIN-03,minor,Data Science Minor,Core,STATS 67,Introduction to Probability and Statistics,4,,TRUE,DS-Minor-Core,,
+DS-MIN-04,minor,Data Science Minor,Core,ICS 80,Data Science Foundations,4,,TRUE,DS-Minor-Core,,
+DS-MIN-05,minor,Data Science Minor,Upper Division,ICS 172,Introduction to Machine Learning,4,ICS 171,TRUE,DS-Minor-UD,,
+DS-MIN-06,minor,Data Science Minor,Upper Division,ICS 184,Database Systems,4,ICS 46,TRUE,DS-Minor-UD,,
+DS-MIN-07,minor,Data Science Minor,Upper Division,,Choose 1 additional UD Data Science course,4,varies,FALSE,DS-Minor-UD-Elective,,

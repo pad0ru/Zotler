@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ZotPlanner</title>
+  <link rel="stylesheet" href="sidebar.css" />
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="logo">
+      <span class="logo-icon">📚</span>
+      <span class="logo-text">ZotPlanner</span>
+    </div>
+    <button id="settings-btn" class="icon-btn" title="Settings">⚙</button>
+  </header>
+
+  <!-- Settings panel (hidden by default) -->
+  <div id="settings-panel" class="hidden">
+    <div class="settings-inner">
+      <h3>Settings</h3>
+      <div class="field">
+        <label>Declared Major</label>
+        <select id="set-major">
+          <option value="cs">Computer Science B.S.</option>
+          <option value="ics">Informatics B.S.</option>
+          <option value="se">Software Engineering B.S.</option>
+          <option value="ds">Data Science B.S.</option>
+          <option value="cse">Computer Science and Engineering B.S.</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Minor (optional)</label>
+        <select id="set-minor">
+          <option value="">None</option>
+          <option value="cs-minor">Computer Science Minor</option>
+          <option value="ds-minor">Data Science Minor</option>
+          <option value="stats">Statistics Minor</option>
+          <option value="math">Mathematics Minor</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Expected Graduation</label>
+        <select id="set-grad">
+          <option>Spring 2025</option>
+          <option>Fall 2025</option>
+          <option>Winter 2026</option>
+          <option selected>Spring 2026</option>
+          <option>Fall 2026</option>
+          <option>Spring 2027</option>
+        </select>
+      </div>
+
+      <div class="setting-section">
+        <label>Import Profile (user_courses.csv)</label>
+        <div class="import-row">
+          <input type="file" id="import-file" accept=".csv,.json" hidden />
+          <button class="btn-outline" onclick="document.getElementById('import-file').click()">
+            📂 Choose File
+          </button>
+          <span id="import-status" class="import-hint">No file loaded</span>
+        </div>
+      </div>
+
+      <div id="profile-summary" class="profile-summary hidden"></div>
+
+      <button class="btn-primary" onclick="saveSettings()">Save Settings</button>
+      <button class="btn-ghost" onclick="toggleSettings()">Close</button>
+    </div>
+  </div>
+
+  <!-- Main chat area -->
+  <div id="chat-area">
+    <div id="messages">
+      <div class="message assistant">
+        <div class="bubble">
+          <p>Hi! I'm ZotPlanner, your UCI academic planning assistant. 👋</p>
+          <p>I can help you with:</p>
+          <ul>
+            <li>Checking if you can add a CS minor</li>
+            <li>Planning your graduation timeline</li>
+            <li>Figuring out what to take next quarter</li>
+            <li>Exploring major/minor options</li>
+          </ul>
+          <p class="hint-text">Start by importing your transcript in ⚙ Settings, or just ask me anything!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Suggested prompts (shown when chat is empty) -->
+  <div id="suggestions">
+    <button class="suggestion" onclick="sendSuggestion(this)">Can I add a CS minor?</button>
+    <button class="suggestion" onclick="sendSuggestion(this)">When can I graduate?</button>
+    <button class="suggestion" onclick="sendSuggestion(this)">What should I take next quarter?</button>
+    <button class="suggestion" onclick="sendSuggestion(this)">What ICS electives are available?</button>
+  </div>
+
+  <!-- Input -->
+  <div id="input-area">
+    <textarea
+      id="user-input"
+      placeholder="Ask anything about your degree plan…"
+      rows="1"
+      maxlength="1000"
+    ></textarea>
+    <button id="send-btn" onclick="sendMessage()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <line x1="22" y1="2" x2="11" y2="13"></line>
+        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+      </svg>
+    </button>
+  </div>
+
+  <script src="sidebar.js"></script>
+</body>
+</html>
