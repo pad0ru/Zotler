@@ -11,15 +11,11 @@ An AI-powered academic planning assistant for UCI students, built as a Chrome Ex
 A persistent sidebar panel (Manifest V3) that opens alongside any webpage:
 
 - **Chat UI** — conversation interface with typing indicator and quick-suggestion chips
-- **Transcript Converter tab** — click "Convert Transcript → CSV" in Settings to open a full Chrome tab that parses your UCI unofficial transcript PDF directly in the browser (PDF.js, locally bundled), shows a review table, and saves your course history to `chrome.storage.local` in one click — no server, no upload
-- **Settings panel** — set declared major, minor, expected graduation; the sidebar auto-refreshes when the converter saves
-- **Mock AI responses** — prototype-quality rule-based responses for:
-  - CS Minor / Data Science Minor eligibility (prereq-aware, based on imported courses)
-  - Graduation timeline estimate
-  - Next-quarter course recommendations (checks completed prereqs)
-  - Prerequisite chains (ICS 31 → 46 → 161 → 171, etc.)
-  - GPA calculation from imported transcript
-  - Major exploration (CS vs. Informatics comparison)
+- **Gemini-powered answers** — questions are sent to Google's Gemini (`gemini-2.0-flash`) with the student's parsed courses **and** the UCI degree-requirement set injected into the system prompt, so responses (minor eligibility, graduation timeline, next-quarter planning, prereq chains, GPA, major exploration) are grounded in the actual transcript. Multi-turn context is preserved across the conversation. Bring your own free Gemini API key.
+- **Full-page Settings tab** — clicking ⚙ opens a dedicated browser tab (roomier than the narrow side panel) to set declared major, minor, expected graduation, the Gemini API key, and to import your transcript. Saves to `chrome.storage.local`; the sidebar auto-refreshes the moment settings change.
+- **Direct transcript import** — drag-and-drop (or choose) your UCI unofficial transcript PDF in Settings and it's parsed on-device with PDF.js (locally bundled) — no intermediate CSV step, no server, no upload.
+- **Course-ID normalization** — the transcript's `I & C SCI 31` form is normalized to `ICS 31` so degree/minor matching works regardless of how courses are labeled.
+- **ASSIST transfer-credit mapping** — a companion converter tab looks up community-college → UCI course equivalencies via the public [ASSIST](https://assist.org) API so transfer credits count toward requirements.
 - **`chrome.storage.local`** — all profile data stored locally; no server required
 
 ### Companion Website (`website/`)
@@ -85,6 +81,8 @@ The UCI unofficial transcript does not include the current quarter's enrollment.
 | Layer | Technology |
 |---|---|
 | Chrome Extension | Manifest V3, Side Panel API, `chrome.storage.local`, PDF.js (bundled) |
+| AI | Google Gemini (`gemini-2.0-flash`) via the Generative Language REST API, called directly from the extension with a user-supplied key |
+| Transfer credits | Public ASSIST articulation API (`prod.assistng.org`) |
 | Website | Vanilla HTML/CSS/JS, PDF.js (CDN) |
 | Scraper | Python 3, `requests`, `beautifulsoup4`, `pdfplumber`, `selenium`, `webdriver-manager` |
 | Data | CSV (no database in prototype phase) |
@@ -93,7 +91,7 @@ The UCI unofficial transcript does not include the current quarter's enrollment.
 
 ## Project Status
 
-This is a **static prototype** (Summer 2026). All AI responses are hardcoded mock replies — no backend, no real LLM calls. The goal is to have a tangible artifact for Iteration 2 feedback sessions when school resumes in Fall 2026.
+This is a **working prototype** (Summer 2026). AI responses now come from real Gemini calls grounded in the student's transcript and the UCI requirement set — the earlier hardcoded mock-reply engine has been replaced. There's still no backend: the extension talks to Gemini directly with a user-supplied key, and all profile data stays in `chrome.storage.local`. The goal is to have a tangible artifact for Iteration 2 feedback sessions when school resumes in Fall 2026.
 
 See the [Requirements Document](https://www.notion.so/) for the full RE iteration log, open questions, and architecture decisions.
 
@@ -104,7 +102,8 @@ See the [Requirements Document](https://www.notion.so/) for the full RE iteratio
 **Chrome Extension (recommended):**
 1. Open `chrome://extensions` → enable **Developer mode**
 2. Click **Load unpacked** → select the `extension/` folder
-3. Click the Zotler icon in the toolbar → open Settings → **Convert Transcript → CSV**
+3. Click the Zotler icon to open the sidebar, then ⚙ to open the **Settings tab**
+4. Paste a free Gemini API key (from [aistudio.google.com](https://aistudio.google.com)) and upload your UCI unofficial transcript PDF — your courses load automatically and the chat is ready
 
 **Companion Website (alternative):**
 ```bash
@@ -125,9 +124,10 @@ python3 uci_scraper.py --help
 
 ## Roadmap
 
-- [ ] Parse Transfer Credit Report to auto-import CC course equivalencies
+- [x] Replace mock responses with real LLM calls (Gemini `gemini-2.0-flash`)
+- [ ] Parse the transcript's transfer/AP sections so CC and AP credits import without the separate ASSIST converter step
 - [ ] Map AP exam scores to UCI course equivalents automatically
-- [ ] Replace mock responses with real Claude API calls
+- [ ] Proxy LLM calls through a backend so the API key isn't shipped in the extension
 - [ ] Pull live course data from WebSOC / UCI Catalogue
 - [ ] Supabase backend for cross-device sync (opt-in, per NFR-05)
 - [ ] Resolve open questions OQ-01 through OQ-05 via Fall 2026 surveys and interviews

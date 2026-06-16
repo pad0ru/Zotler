@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Zotler — Settings</title>
+  <link rel="stylesheet" href="sidebar.css" />
+  <script src="lib/pdf.min.js"></script>
+  <style>
+    html, body { overflow: auto; background: var(--bg); }
+    .settings-page {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 32px 28px 64px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+    .settings-page h1 { font-size: 22px; font-weight: 700; }
+    .settings-page .page-sub { color: var(--text-sub); font-size: 14px; margin-top: -14px; }
+    .settings-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .settings-card h2 { font-size: 15px; font-weight: 700; }
+    .settings-page .field select,
+    .settings-page .field input {
+      padding: 11px 13px;
+      font-size: 14px;
+      border-radius: 9px;
+    }
+    .settings-page .field label { font-size: 12px; }
+    .upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: 10px;
+      padding: 26px;
+      text-align: center;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .upload-zone.drag-over { border-color: var(--uci-light); background: #f0f7fc; }
+    .upload-zone .up-icon { font-size: 34px; }
+    .upload-zone p { margin: 6px 0; color: var(--text-sub); font-size: 13px; }
+    .save-row { display: flex; gap: 12px; align-items: center; }
+    .save-row .btn-primary { padding: 12px 22px; font-size: 14px; }
+    #saved-flag { color: #2ecc71; font-size: 13px; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="icons/icon48.png" alt="Zotler" class="logo-icon" style="width:24px;height:24px" />
+      <span class="logo-text">Zotler Settings</span>
+    </div>
+  </header>
+
+  <div class="settings-page">
+    <div>
+      <h1>Settings</h1>
+      <p class="page-sub">Set up your degree profile and import your transcript. Changes sync to the chat sidebar automatically.</p>
+    </div>
+
+    <!-- Degree profile -->
+    <div class="settings-card">
+      <h2>Degree Profile</h2>
+      <div class="field">
+        <label>Declared Major</label>
+        <select id="set-major">
+          <option value="cs">Computer Science B.S.</option>
+          <option value="ics">Informatics B.S.</option>
+          <option value="se">Software Engineering B.S.</option>
+          <option value="ds">Data Science B.S.</option>
+          <option value="cse">Computer Science and Engineering B.S.</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Minor (optional)</label>
+        <select id="set-minor">
+          <option value="">None</option>
+          <option value="cs-minor">Computer Science Minor</option>
+          <option value="ds-minor">Data Science Minor</option>
+          <option value="stats">Statistics Minor</option>
+          <option value="math">Mathematics Minor</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Expected Graduation</label>
+        <select id="set-grad">
+          <option>Spring 2025</option>
+          <option>Fall 2025</option>
+          <option>Winter 2026</option>
+          <option selected>Spring 2026</option>
+          <option>Fall 2026</option>
+          <option>Spring 2027</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- AI key -->
+    <div class="settings-card">
+      <h2>AI Assistant</h2>
+      <div class="field">
+        <label>Gemini API Key</label>
+        <input type="password" id="set-gemini-key" placeholder="AIza…" autocomplete="off" />
+        <span class="import-hint">Get a free key at aistudio.google.com → "Get API key". Make sure the Generative Language API is enabled.</span>
+      </div>
+    </div>
+
+    <!-- Transcript -->
+    <div class="settings-card">
+      <h2>Transcript</h2>
+      <p class="import-hint">Upload your UCI unofficial transcript PDF — it's parsed on your device and your courses load automatically.</p>
+      <div class="upload-zone" id="upload-zone">
+        <input type="file" id="import-pdf" accept=".pdf" style="display:none" />
+        <div class="up-icon">📄</div>
+        <p>Drag &amp; drop your transcript PDF here</p>
+        <label for="import-pdf" class="btn-primary" style="cursor:pointer;display:inline-block">Choose PDF</label>
+        <p id="pdf-status" class="import-hint" style="margin-top:10px">No transcript loaded</p>
+      </div>
+      <div id="pdf-progress" class="pdf-progress hidden"><div id="pdf-progress-bar"></div></div>
+      <div id="profile-summary" class="profile-summary hidden"></div>
+    </div>
+
+    <div class="save-row">
+      <button id="save-settings-btn" class="btn-primary">Save Settings</button>
+      <span id="saved-flag" class="hidden">✓ Saved</span>
+    </div>
+  </div>
+
+  <script src="settings.js"></script>
+</body>
+</html>

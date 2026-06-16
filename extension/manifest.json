@@ -26,7 +26,7 @@
     "activeTab",
     "tabs"
   ],
-  "host_permissions": [],
+  "host_permissions": ["https://prod.assistng.org/*", "https://generativelanguage.googleapis.com/*"],
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'"
   },

@@ -46,6 +46,12 @@
         <div id="stats"></div>
       </div>
 
+      <!-- Shown if CC blocks were detected in the transcript -->
+      <div id="cc-banner" class="cc-banner hidden">
+        <span id="cc-banner-text"></span>
+        <button id="cc-banner-btn" class="btn-sm-link">Add transfer credits →</button>
+      </div>
+
       <div class="table-wrap">
         <table>
           <thead>
@@ -66,7 +72,76 @@
       <div class="action-row">
         <button id="back-btn" class="btn-ghost">← Try Another PDF</button>
         <button id="export-btn" class="btn-outline">⬇ Export CSV</button>
+        <button id="add-transfer-btn" class="btn-outline">＋ Transfer Credits</button>
         <button id="save-btn" class="btn-primary">✓ Save to Zotler</button>
+      </div>
+    </section>
+
+    <!-- Step 2.5: Transfer Credits -->
+    <section id="step-transfer" class="card hidden">
+      <h2>Transfer Credits</h2>
+      <p class="sub">
+        Add courses you completed at a community college. Zotler looks up the
+        UCI equivalents via ASSIST and stores them so prereq checks work correctly.
+      </p>
+
+      <div class="transfer-form">
+        <div class="form-row">
+          <label class="form-label" for="cc-school">Community College</label>
+          <select id="cc-school" class="form-select">
+            <option value="">— Select your college —</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="cc-year">Academic Year</label>
+          <select id="cc-year" class="form-select"></select>
+        </div>
+        <button id="load-agreement-btn" class="btn-primary">Load Articulation Agreement</button>
+        <p id="agreement-status" class="status-msg"></p>
+      </div>
+
+      <div id="agreement-wrap" class="hidden">
+        <p class="section-label">Select the courses you completed at this college:</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:36px"></th>
+                <th>CC Course</th>
+                <th>CC Units</th>
+                <th>→ UCI Equivalent</th>
+                <th>UCI Units</th>
+              </tr>
+            </thead>
+            <tbody id="agreement-tbody"></tbody>
+          </table>
+        </div>
+        <button id="add-selected-btn" class="btn-outline" style="margin-top:12px">✓ Add Selected</button>
+      </div>
+
+      <div id="transfer-list-wrap" class="hidden">
+        <p class="section-label" style="margin-top:28px">Added transfer credits:</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>UCI Equivalent</th>
+                <th>UCI Units</th>
+                <th>From</th>
+                <th>CC Course</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="transfer-tbody"></tbody>
+          </table>
+        </div>
+        <div id="transfer-stats" style="margin-top:8px"></div>
+      </div>
+
+      <div class="action-row">
+        <button id="back-to-review-btn" class="btn-ghost">← Back to Review</button>
+        <button id="skip-transfer-btn" class="btn-outline">Skip for Now</button>
+        <button id="save-with-transfer-btn" class="btn-primary">✓ Save All to Zotler</button>
       </div>
     </section>
 
@@ -80,6 +155,7 @@
     </section>
   </main>
 
+  <script src="assist.js"></script>
   <script src="converter.js"></script>
 </body>
 </html>

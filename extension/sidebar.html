@@ -15,80 +15,6 @@
     <button id="settings-btn" class="icon-btn" title="Settings">⚙</button>
   </header>
 
-  <!-- Settings panel (hidden by default) -->
-  <div id="settings-panel" class="hidden">
-    <div class="settings-inner">
-      <h3>Settings</h3>
-
-      <button id="open-converter-btn" class="btn-converter">
-        📄 Convert Transcript → CSV
-        <span class="converter-sub">Open the transcript importer</span>
-      </button>
-
-      <div class="field">
-        <label>Declared Major</label>
-        <select id="set-major">
-          <option value="cs">Computer Science B.S.</option>
-          <option value="ics">Informatics B.S.</option>
-          <option value="se">Software Engineering B.S.</option>
-          <option value="ds">Data Science B.S.</option>
-          <option value="cse">Computer Science and Engineering B.S.</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Minor (optional)</label>
-        <select id="set-minor">
-          <option value="">None</option>
-          <option value="cs-minor">Computer Science Minor</option>
-          <option value="ds-minor">Data Science Minor</option>
-          <option value="stats">Statistics Minor</option>
-          <option value="math">Mathematics Minor</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Expected Graduation</label>
-        <select id="set-grad">
-          <option>Spring 2025</option>
-          <option>Fall 2025</option>
-          <option>Winter 2026</option>
-          <option selected>Spring 2026</option>
-          <option>Fall 2026</option>
-          <option>Spring 2027</option>
-        </select>
-      </div>
-
-      <div class="setting-section">
-        <label>Import Transcript (PDF)</label>
-        <div class="import-row">
-          <input type="file" id="import-pdf" accept=".pdf" style="display:none" />
-          <label for="import-pdf" class="btn-outline" style="cursor:pointer;">
-            📄 Upload Transcript
-          </label>
-          <span id="pdf-status" class="import-hint">No transcript loaded</span>
-        </div>
-        <div id="pdf-progress" class="pdf-progress hidden">
-          <div id="pdf-progress-bar"></div>
-        </div>
-      </div>
-
-      <div class="setting-section">
-        <label>Import CSV / JSON</label>
-        <div class="import-row">
-          <input type="file" id="import-file" accept=".csv,.json" style="display:none" />
-          <label for="import-file" class="btn-outline" style="cursor:pointer;">
-            📂 Choose File
-          </label>
-          <span id="import-status" class="import-hint">No file loaded</span>
-        </div>
-      </div>
-
-      <div id="profile-summary" class="profile-summary hidden"></div>
-
-      <button id="save-settings-btn" class="btn-primary">Save Settings</button>
-      <button id="close-settings-btn" class="btn-ghost">Close</button>
-    </div>
-  </div>
-
   <!-- Main chat area -->
   <div id="chat-area">
     <div id="messages">
@@ -132,7 +58,6 @@
     </button>
   </div>
 
-  <script src="lib/pdf.min.js"></script>
   <script src="sidebar.js"></script>
 </body>
 </html>

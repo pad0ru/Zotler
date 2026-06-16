@@ -173,4 +173,98 @@ tr:hover td { background: rgba(0,100,164,0.03); }
 #step-done h2 { font-size: 24px; margin-bottom: 12px; }
 #step-done .sub { max-width: 400px; margin: 0 auto 24px; }
 
+/* Transfer Credits step */
+.transfer-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--sub);
+}
+
+.form-select {
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--text);
+  background: white;
+  cursor: pointer;
+  max-width: 440px;
+}
+
+.section-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--sub);
+  margin-bottom: 10px;
+}
+
+.status-msg {
+  font-size: 13px;
+  color: var(--sub);
+  min-height: 20px;
+}
+.status-msg.error { color: var(--red); }
+.status-msg.ok    { color: var(--green); }
+
+/* CC detection banner */
+.cc-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fffbea;
+  border: 1px solid #f0c040;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.btn-sm-link {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  white-space: nowrap;
+}
+
+/* Transfer badge */
+.badge-tr {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  background: #e8f4fd;
+  color: var(--accent);
+  letter-spacing: 0.03em;
+  margin-left: 4px;
+}
+
+/* Checkbox column */
+input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: var(--accent);
+}
+
 .hidden { display: none !important; }
