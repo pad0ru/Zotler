@@ -25,7 +25,9 @@ header {
   padding: 16px 32px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
 }
+#tutorial-link { text-decoration: none; font-size: 13px; }
 .logo { display: flex; align-items: center; gap: 12px; }
 .logo-img { width: 32px; height: 32px; border-radius: 6px; }
 .logo-text { color: white; font-size: 20px; font-weight: 700; }
@@ -153,6 +155,15 @@ tr:hover td { background: rgba(0,100,164,0.03); }
 .g-c { background:#fff3cd; color:#856404; }
 .g-d { background:#f8d7da; color:#721c24; }
 .g-x { background:#e2e3e5; color:#383d41; }
+
+.status-pill {
+  display: inline-block; padding: 2px 8px;
+  border-radius: 4px; font-size: 12px; font-weight: 600;
+}
+.st-done { background:#d4edda; color:#1a5c34; }
+.st-prog { background:#cce5ff; color:#004085; }
+.st-plan { background:#e7e0ff; color:#4b2e83; }
+.st-x    { background:#e2e3e5; color:#383d41; }
 
 .btn-remove {
   background: none; border: none; cursor: pointer;

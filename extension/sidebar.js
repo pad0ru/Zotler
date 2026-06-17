@@ -109,7 +109,8 @@ function removeTyping(el) { el.remove(); }
 
 function normalizeCourseId(id) {
   return (id || "").toUpperCase()
-    .replace(/^I\s*&\s*C\s+SCI\s+/, "ICS ")
+    // DegreeWorks "I&CSCI" and transcript "I & C SCI" both map to "ICS"
+    .replace(/^I\s*&\s*C\s*SCI\s+/, "ICS ")
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -139,7 +140,7 @@ function buildSystemPrompt() {
     ? completed.map(c => {
         const id = normalizeCourseId(c.course_id);
         return c.source === "transfer"
-          ? `${id} (transfer from ${c.cc_institution ?? "CC"})`
+          ? `${id} (transfer from ${c.transfer_origin || c.cc_institution || "CC"})`
           : id;
       }).join(", ")
     : "none imported yet — ask the student to import their transcript";

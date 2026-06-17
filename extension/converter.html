@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <title>Zotler — Transcript Converter</title>
   <link rel="stylesheet" href="converter.css" />
-  <script src="lib/pdf.min.js"></script>
 </head>
 <body>
   <header>
@@ -13,26 +12,32 @@
       <span class="logo-text">Zotler</span>
       <span class="logo-sub">Transcript Converter</span>
     </div>
+    <a id="tutorial-link"
+       href="https://docs.google.com/document/d/1qFtj0sL0nvSMTMW-youA0BCI1rTfHbrPS1s51MULYs0/edit"
+       target="_blank" rel="noopener" class="btn-outline">📖 How it works</a>
   </header>
 
   <main>
     <!-- Step 1: Upload -->
     <section id="step-upload" class="card">
-      <h2>Import Your Unofficial Transcript</h2>
-      <p class="sub">Your PDF is processed entirely on your device — nothing is uploaded anywhere.</p>
+      <h2>Import Your DegreeWorks CSV</h2>
+      <p class="sub">
+        Generate your CSV using the prompt in the
+        <a href="https://docs.google.com/document/d/1qFtj0sL0nvSMTMW-youA0BCI1rTfHbrPS1s51MULYs0/edit"
+           target="_blank" rel="noopener">tutorial</a>, then drop the file here.
+        Everything is processed on your device — nothing is uploaded anywhere.
+      </p>
 
       <div class="upload-area" id="upload-area">
-        <input type="file" id="pdf-input" accept=".pdf" style="display:none" />
-        <div class="upload-icon">📄</div>
-        <p>Drag &amp; drop your UCI unofficial transcript PDF</p>
+        <input type="file" id="csv-input" accept=".csv,text/csv" style="display:none" />
+        <div class="upload-icon">📊</div>
+        <p>Drag &amp; drop your DegreeWorks CSV</p>
         <p class="small">or</p>
-        <label for="pdf-input" class="btn-primary" style="cursor:pointer;">Choose PDF</label>
-        <p class="hint">Go to student.uci.edu → Student Records → View Unofficial Transcript → Print to PDF</p>
-      </div>
-
-      <div id="progress-wrap" class="hidden">
-        <p id="progress-label" class="progress-label">Parsing page 1…</p>
-        <div class="progress-track"><div id="progress-bar"></div></div>
+        <label for="csv-input" class="btn-primary" style="cursor:pointer;">Choose CSV</label>
+        <p class="hint">
+          DegreeWorks → select all (Ctrl/Cmd+A) → paste into an AI with the tutorial prompt →
+          save the CSV output here.
+        </p>
       </div>
     </section>
 
@@ -46,12 +51,6 @@
         <div id="stats"></div>
       </div>
 
-      <!-- Shown if CC blocks were detected in the transcript -->
-      <div id="cc-banner" class="cc-banner hidden">
-        <span id="cc-banner-text"></span>
-        <button id="cc-banner-btn" class="btn-sm-link">Add transfer credits →</button>
-      </div>
-
       <div class="table-wrap">
         <table>
           <thead>
@@ -60,8 +59,9 @@
               <th>Course Name</th>
               <th>Units</th>
               <th>Grade</th>
-              <th>Quarter</th>
-              <th>Year</th>
+              <th>Term</th>
+              <th>Status</th>
+              <th>Source</th>
               <th></th>
             </tr>
           </thead>
@@ -70,78 +70,8 @@
       </div>
 
       <div class="action-row">
-        <button id="back-btn" class="btn-ghost">← Try Another PDF</button>
-        <button id="export-btn" class="btn-outline">⬇ Export CSV</button>
-        <button id="add-transfer-btn" class="btn-outline">＋ Transfer Credits</button>
+        <button id="back-btn" class="btn-ghost">← Import Another CSV</button>
         <button id="save-btn" class="btn-primary">✓ Save to Zotler</button>
-      </div>
-    </section>
-
-    <!-- Step 2.5: Transfer Credits -->
-    <section id="step-transfer" class="card hidden">
-      <h2>Transfer Credits</h2>
-      <p class="sub">
-        Add courses you completed at a community college. Zotler looks up the
-        UCI equivalents via ASSIST and stores them so prereq checks work correctly.
-      </p>
-
-      <div class="transfer-form">
-        <div class="form-row">
-          <label class="form-label" for="cc-school">Community College</label>
-          <select id="cc-school" class="form-select">
-            <option value="">— Select your college —</option>
-          </select>
-        </div>
-        <div class="form-row">
-          <label class="form-label" for="cc-year">Academic Year</label>
-          <select id="cc-year" class="form-select"></select>
-        </div>
-        <button id="load-agreement-btn" class="btn-primary">Load Articulation Agreement</button>
-        <p id="agreement-status" class="status-msg"></p>
-      </div>
-
-      <div id="agreement-wrap" class="hidden">
-        <p class="section-label">Select the courses you completed at this college:</p>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th style="width:36px"></th>
-                <th>CC Course</th>
-                <th>CC Units</th>
-                <th>→ UCI Equivalent</th>
-                <th>UCI Units</th>
-              </tr>
-            </thead>
-            <tbody id="agreement-tbody"></tbody>
-          </table>
-        </div>
-        <button id="add-selected-btn" class="btn-outline" style="margin-top:12px">✓ Add Selected</button>
-      </div>
-
-      <div id="transfer-list-wrap" class="hidden">
-        <p class="section-label" style="margin-top:28px">Added transfer credits:</p>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>UCI Equivalent</th>
-                <th>UCI Units</th>
-                <th>From</th>
-                <th>CC Course</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="transfer-tbody"></tbody>
-          </table>
-        </div>
-        <div id="transfer-stats" style="margin-top:8px"></div>
-      </div>
-
-      <div class="action-row">
-        <button id="back-to-review-btn" class="btn-ghost">← Back to Review</button>
-        <button id="skip-transfer-btn" class="btn-outline">Skip for Now</button>
-        <button id="save-with-transfer-btn" class="btn-primary">✓ Save All to Zotler</button>
       </div>
     </section>
 
@@ -155,7 +85,6 @@
     </section>
   </main>
 
-  <script src="assist.js"></script>
   <script src="converter.js"></script>
 </body>
 </html>
