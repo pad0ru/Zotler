@@ -138,9 +138,9 @@ Open design questions for making the import robust, not just happy-path:
 
 ---
 
-## Roadmap
+## Roadmap (temp)
 
-- [x] Replace mock responses with real LLM calls (Gemini `gemini-2.0-flash`) (temp)
+- [x] Replace mock responses with real LLM calls (Gemini `gemini-2.0-flash`)
 - [x] Import transfer/AP credits in one pass via the DegreeWorks CSV flow (replaces the separate ASSIST converter step)
 - [x] Capture in-progress and planned courses from the audit (status derived by the AI)
 - [ ] Harden CSV import: alternative/error flows for non-CSV or wrong-format files (see TODO above)
