@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <title>Zotler — Settings</title>
   <link rel="stylesheet" href="sidebar.css" />
-  <script src="lib/pdf.min.js"></script>
   <style>
     html, body { overflow: auto; background: var(--bg); }
     .settings-page {
@@ -109,18 +108,22 @@
       </div>
     </div>
 
-    <!-- Transcript -->
+    <!-- Courses -->
     <div class="settings-card">
-      <h2>Transcript</h2>
-      <p class="import-hint">Upload your UCI unofficial transcript PDF — it's parsed on your device and your courses load automatically.</p>
+      <h2>Courses</h2>
+      <p class="import-hint">
+        Import your DegreeWorks CSV — generate it with the prompt in the
+        <a href="https://docs.google.com/document/d/1qFtj0sL0nvSMTMW-youA0BCI1rTfHbrPS1s51MULYs0/edit"
+           target="_blank" rel="noopener">tutorial</a>,
+        then drop the file here. It's parsed on your device and your courses load automatically.
+      </p>
       <div class="upload-zone" id="upload-zone">
-        <input type="file" id="import-pdf" accept=".pdf" style="display:none" />
-        <div class="up-icon">📄</div>
-        <p>Drag &amp; drop your transcript PDF here</p>
-        <label for="import-pdf" class="btn-primary" style="cursor:pointer;display:inline-block">Choose PDF</label>
-        <p id="pdf-status" class="import-hint" style="margin-top:10px">No transcript loaded</p>
+        <input type="file" id="import-csv" accept=".csv,text/csv" style="display:none" />
+        <div class="up-icon">📊</div>
+        <p>Drag &amp; drop your DegreeWorks CSV here</p>
+        <label for="import-csv" class="btn-primary" style="cursor:pointer;display:inline-block">Choose CSV</label>
+        <p id="import-status" class="import-hint" style="margin-top:10px">No courses loaded</p>
       </div>
-      <div id="pdf-progress" class="pdf-progress hidden"><div id="pdf-progress-bar"></div></div>
       <div id="profile-summary" class="profile-summary hidden"></div>
     </div>
 
@@ -130,6 +133,7 @@
     </div>
   </div>
 
+  <script src="csv-import.js"></script>
   <script src="settings.js"></script>
 </body>
 </html>
