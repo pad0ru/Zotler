@@ -9,6 +9,12 @@
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "zotler@pad0ru.dev",
+      "strict_min_version": "115.0"
+    }
+  },
   "action": {
     "default_title": "Open Zotler",
     "default_icon": { "16": "icons/icon16.png", "48": "icons/icon48.png" }
@@ -16,9 +22,14 @@
   "side_panel": {
     "default_path": "sidebar.html"
   },
+  "sidebar_action": {
+    "default_panel": "sidebar.html",
+    "default_icon": { "16": "icons/icon16.png", "48": "icons/icon48.png" },
+    "default_title": "Zotler"
+  },
   "background": {
     "service_worker": "background.js",
-    "type": "module"
+    "scripts": ["background.js"]
   },
   "permissions": [
     "storage",
@@ -26,7 +37,7 @@
     "activeTab",
     "tabs"
   ],
-  "host_permissions": ["https://prod.assistng.org/*", "https://generativelanguage.googleapis.com/*"],
+  "host_permissions": ["https://generativelanguage.googleapis.com/*"],
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'"
   },

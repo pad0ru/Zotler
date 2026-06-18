@@ -1,14 +1,14 @@
 # Zotler — UCI AI Academic Planner
 
-An AI-powered academic planning assistant for UCI students, built as a Chrome Extension. Ask natural-language questions about your degree, explore major/minor options, and generate a graduation timeline — all from your browser, with your data staying on your device.
+An AI-powered academic planning assistant for UCI students, built as a cross-browser (Chrome + Firefox) extension. Ask natural-language questions about your degree, explore major/minor options, and generate a graduation timeline — all from your browser, with your data staying on your device.
 
 ---
 
 ## What's Been Built (Prototype v0.2)
 
-### Chrome Extension (`extension/`)
+### Browser Extension (`extension/`)
 
-A persistent sidebar panel (Manifest V3) that opens alongside any webpage:
+A persistent sidebar panel (Manifest V3, runs in **Chrome and Firefox**) that opens alongside any webpage:
 
 - **Chat UI** — conversation interface with typing indicator and quick-suggestion chips
 - **Gemini-powered answers** — questions are sent to Google's Gemini (`gemini-2.0-flash`) with the student's parsed courses **and** the UCI degree-requirement set injected into the system prompt, so responses (minor eligibility, graduation timeline, next-quarter planning, prereq chains, GPA, major exploration) are grounded in the actual transcript. Multi-turn context is preserved across the conversation. Bring your own free Gemini API key.
@@ -76,7 +76,7 @@ The importer parses the CSV entirely in the browser (RFC-4180 quoted-field handl
 
 | Layer | Technology |
 |---|---|
-| Chrome Extension | Manifest V3, Side Panel API, `chrome.storage.local` |
+| Browser Extension | Manifest V3, cross-browser (Chrome **Side Panel API** + Firefox **Sidebar API**), `chrome.storage.local` |
 | Course import | DegreeWorks → AI-generated 12-column CSV, parsed on-device |
 | AI | Google Gemini (`gemini-2.0-flash`) via the Generative Language REST API, called directly from the extension with a user-supplied key |
 | Website | Vanilla HTML/CSS/JS, PDF.js (CDN) — legacy onboarding flow |
@@ -95,11 +95,18 @@ See the [Requirements Document](https://www.notion.so/) for the full RE iteratio
 
 ## Running Locally
 
-**Chrome Extension (recommended):**
+**Chrome (recommended):**
 1. Open `chrome://extensions` → enable **Developer mode**
 2. Click **Load unpacked** → select the `extension/` folder
-3. Click the Zotler icon to open the sidebar, then ⚙ to open the **Settings tab**
+3. Click the Zotler icon to open the side panel, then ⚙ to open the **Settings tab**
 4. Paste a free Gemini API key (from [aistudio.google.com](https://aistudio.google.com)), then import your courses: generate the CSV from DegreeWorks using the in-app **📖 How it works** tutorial and drop it into the converter — your courses load automatically and the chat is ready
+
+**Firefox:**
+1. Open `about:debugging#/runtime/this-firefox`
+2. Click **Load Temporary Add-on…** → select `extension/manifest.json`
+3. Click the Zotler toolbar icon to toggle the sidebar (Firefox loads `sidebar.html` via the Sidebar API). The rest of the flow is identical to Chrome.
+
+> The same `manifest.json` works in both browsers: Chrome uses `background.service_worker` + `side_panel`, Firefox uses `background.scripts` + `sidebar_action`, and each ignores the other's keys. Firefox logs a harmless warning about the Chrome-only `sidePanel` permission.
 
 **Companion Website (alternative):**
 ```bash
