@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "Zotler — UCI AI Academic Planner",
-  "short_name": "Zotler",
+  "name": "Zotler (MOCK DEMO) — UCI AI Academic Planner",
+  "short_name": "Zotler MOCK",
   "version": "0.2.0",
-  "description": "AI-powered academic planning assistant for UCI students. Ask questions about your degree, majors, minors, and graduation timeline.",
+  "description": "MOCK / SCRIPTED DEMO BUILD — answers are pre-staged, no live Gemini calls. For rehearsing demo pacing only, not the real product. AI-powered academic planning assistant for UCI students.",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
@@ -16,7 +16,7 @@
     }
   },
   "action": {
-    "default_title": "Open Zotler",
+    "default_title": "Open Zotler (MOCK DEMO)",
     "default_icon": { "16": "icons/icon16.png", "48": "icons/icon48.png" }
   },
   "side_panel": {
@@ -25,7 +25,7 @@
   "sidebar_action": {
     "default_panel": "sidebar.html",
     "default_icon": { "16": "icons/icon16.png", "48": "icons/icon48.png" },
-    "default_title": "Zotler"
+    "default_title": "Zotler (MOCK DEMO)"
   },
   "background": {
     "service_worker": "background.js",

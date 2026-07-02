@@ -13,7 +13,12 @@ An AI-powered academic planning assistant for UCI students, built as a cross-bro
 A persistent sidebar panel (Manifest V3, runs in **Chrome and Firefox**) that opens alongside any webpage:
 
 - **Chat UI** — conversation interface with typing indicator and quick-suggestion chips
-- **Scripted demo responses (no live AI)** — the assistant runs three **pre-staged flows** — "Can I add a CS minor?", "What should I take next quarter?", and "When can I graduate?" — matched to whatever the presenter types or clicks by keyword. A short randomized delay simulates model latency so the typing indicator reads as real, and an off-script fallback steers the conversation back to the three supported flows. **No API is called and no data leaves the device.** The intent is a controllable, repeatable demo for feedback sessions, not a working AI backend.
+- **Scripted demo responses (no live AI)** — the assistant runs six **pre-staged flows** matched to whatever the presenter types or clicks by keyword, covering all three RE demo patterns:
+  - ✅ **Happy** — "What should I take next quarter?", "When can I graduate?", "What ICS electives are available?" — correct prereq chains and requirement mapping, grounded in the sample transcript
+  - ⚠️ **Alternative (self-correcting)** — "Can I add a CS minor?" (audits requirements, then catches the outside-the-school eligibility rule) and "Do I need ICS 45C before ICS 45J?" (assumes sequential numbering implies a prereq, then corrects against the catalogue)
+  - ❌ **Bad (deliberate failure)** — "Can I take ICS 99X (Advanced Wizardry) with ICS 139W next quarter?" — confidently accepts a non-existent course and mislabels ICS 139W, to demo what validation gaps look like
+  
+  A short randomized delay simulates model latency so the typing indicator reads as real, and an off-script fallback steers the conversation back to the supported flows. **No API is called and no data leaves the device.** Every course ID, unit count, and prerequisite in the scripts was verified against `catalogue.uci.edu` — see [`demo-flows.md`](demo-flows.md) for the research table and rationale. The intent is a controllable, repeatable demo for feedback sessions, not a working AI backend.
 - **Full-page Settings tab** — clicking ⚙ opens a dedicated browser tab (roomier than the narrow side panel) to set declared major, minor, expected graduation, an (inert) Gemini API-key field, and to import your courses. Saves to `chrome.storage.local`; the sidebar auto-refreshes the moment settings change.
 - **DegreeWorks CSV import** — copy your DegreeWorks audit, paste it into any AI (Gemini/Claude/ChatGPT/DeepSeek) with the provided prompt to get a structured 12-column CSV, then drag-and-drop that CSV into either the converter tab **or** the Settings tab — both share one importer (`csv-import.js`). It's parsed on-device — no server, no upload. A **📖 How it works** button links to the step-by-step tutorial. Because the AI classifies everything up front, transfer credits, AP credits, and in-progress/planned courses all import in one pass.
 - **Course-ID normalization** — both the DegreeWorks `I&CSCI 45J` and transcript `I & C SCI 45J` forms normalize to `ICS 45J` so degree/minor matching works regardless of how courses are labeled.
@@ -101,7 +106,7 @@ See the [Requirements Document](https://www.notion.so/) for the full RE iteratio
 1. Open `chrome://extensions` → enable **Developer mode**
 2. Click **Load unpacked** → select the `extension/` folder
 3. Click the Zotler icon to open the side panel, then ⚙ to open the **Settings tab**
-4. (Optional) import your courses: generate the CSV from DegreeWorks using the in-app **📖 How it works** tutorial and drop it into the converter — your courses load on-device. **No API key is needed** — the chat is scripted. To see the demo, click a suggestion chip or ask about a **CS minor**, **next quarter**, or your **graduation timeline**
+4. (Optional) import your courses: generate the CSV from DegreeWorks using the in-app **📖 How it works** tutorial and drop it into the converter — your courses load on-device. **No API key is needed** — the chat is scripted. To see the demo, click a suggestion chip, or type **"Do I need ICS 45C before ICS 45J?"** (self-correcting) or **"Can I take ICS 99X (Advanced Wizardry) with ICS 139W next quarter?"** (deliberate failure) — see [`demo-flows.md`](demo-flows.md) for the full script and talk track
 
 **Firefox:**
 1. Open `about:debugging#/runtime/this-firefox`
