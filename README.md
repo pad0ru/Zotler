@@ -2,8 +2,6 @@
 
 An AI-powered academic planning assistant for UCI students, built as a cross-browser (Chrome + Firefox) extension. Ask natural-language questions about your degree, explore major/minor options, and generate a graduation timeline — all from your browser, with your data staying on your device.
 
-> **⚠️ This is a scripted mock demo.** The chat assistant does **not** call a live LLM. Responses come from a small set of **pre-staged, hardcoded flows** matched by keyword (see [`extension/sidebar.js`](extension/sidebar.js)), with a simulated "thinking" delay so the demo reads like a real model on stage. The Gemini API-key field in Settings is **inert** in this build — nothing is sent anywhere. It exists to show product intent for a future live version. The DegreeWorks CSV importer, by contrast, does perform real on-device parsing.
-
 ---
 
 ## What's Been Built (Scripted Demo v0.2)
