@@ -41,16 +41,6 @@ header {
 .logo { display: flex; align-items: center; gap: 7px; flex: 1; }
 .logo-icon { font-size: 20px; }
 .logo-text { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
-.mock-badge {
-  font-size: 9px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-  color: #fff;
-  background: #e74c3c;
-  padding: 2px 5px;
-  border-radius: 4px;
-  text-transform: uppercase;
-}
 .icon-btn {
   background: none;
   border: none;
