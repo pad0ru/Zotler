@@ -65,25 +65,14 @@
     <!-- Degree profile -->
     <div class="settings-card">
       <h2>Degree Profile</h2>
+      <p class="import-hint">Major and minor are filled in automatically when you import your DegreeWorks CSV — edit them here only if the import got it wrong.</p>
       <div class="field">
         <label>Declared Major</label>
-        <select id="set-major">
-          <option value="cs">Computer Science B.S.</option>
-          <option value="ics">Informatics B.S.</option>
-          <option value="se">Software Engineering B.S.</option>
-          <option value="ds">Data Science B.S.</option>
-          <option value="cse">Computer Science and Engineering B.S.</option>
-        </select>
+        <input type="text" id="set-major" placeholder="Auto-filled from your DegreeWorks import" />
       </div>
       <div class="field">
         <label>Minor (optional)</label>
-        <select id="set-minor">
-          <option value="">None</option>
-          <option value="cs-minor">Computer Science Minor</option>
-          <option value="ds-minor">Data Science Minor</option>
-          <option value="stats">Statistics Minor</option>
-          <option value="math">Mathematics Minor</option>
-        </select>
+        <input type="text" id="set-minor" placeholder="None" />
       </div>
       <div class="field">
         <label>Expected Graduation</label>

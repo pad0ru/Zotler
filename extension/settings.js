@@ -1,20 +1,13 @@
 // Zotler Settings — full-page editor (degree profile, API key, transcript import)
 
 let profile = {
-  major: "Computer Science B.S.",
+  major: "",
   minor: null,
+  catalog_year: "",
+  audit_term: "",
   grad_expected: "Spring 2026",
   courses: [],
 };
-
-const majorMap = {
-  "Computer Science B.S.": "cs",
-  "Informatics B.S.": "ics",
-  "Software Engineering B.S.": "se",
-  "Data Science B.S.": "ds",
-  "Computer Science and Engineering B.S.": "cse",
-};
-const majorLabels = Object.fromEntries(Object.entries(majorMap).map(([k, v]) => [v, k]));
 
 // ── Boot ───────────────────────────────────────────────────────
 
@@ -32,16 +25,16 @@ const majorLabels = Object.fromEntries(Object.entries(majorMap).map(([k, v]) => 
 })();
 
 function applyProfileToFields() {
-  if (majorMap[profile.major]) document.getElementById("set-major").value = majorMap[profile.major];
-  if (profile.minor) document.getElementById("set-minor").value = profile.minor;
+  document.getElementById("set-major").value = profile.major || "";
+  document.getElementById("set-minor").value = profile.minor || "";
   if (profile.grad_expected) document.getElementById("set-grad").value = profile.grad_expected;
 }
 
 // ── Save ───────────────────────────────────────────────────────
 
 document.getElementById("save-settings-btn").addEventListener("click", () => {
-  profile.major = majorLabels[document.getElementById("set-major").value];
-  profile.minor = document.getElementById("set-minor").value || null;
+  profile.major = document.getElementById("set-major").value.trim();
+  profile.minor = document.getElementById("set-minor").value.trim() || null;
   profile.grad_expected = document.getElementById("set-grad").value;
   storageSet("profile", profile);
 
@@ -81,7 +74,7 @@ async function handleCSVImport(file) {
 
   try {
     const text = await file.text();
-    const { courses, error } = ZotlerCSV.parse(text);
+    const { courses, profileMeta, error } = ZotlerCSV.parse(text);
 
     if (error) {
       setImportStatus(error, true);
@@ -89,11 +82,17 @@ async function handleCSVImport(file) {
     }
 
     profile.courses = courses;
+    if (profileMeta.major) profile.major = profileMeta.major;
+    if ("minor" in profileMeta) profile.minor = profileMeta.minor || null;
+    if (profileMeta.catalog_year) profile.catalog_year = profileMeta.catalog_year;
+    if (profileMeta.audit_term) profile.audit_term = profileMeta.audit_term;
     storageSet("profile", profile);
+    applyProfileToFields();
 
     const xfer = courses.filter(c => c.source === "transfer").length;
     let msg = `Imported ${courses.length} courses`;
     if (xfer) msg += ` · ${xfer} transfer credit${xfer !== 1 ? "s" : ""}`;
+    if (profileMeta.major) msg += ` · major set to ${profileMeta.major}`;
     setImportStatus(msg, false, true);
     showProfileSummary();
   } catch (err) {
@@ -112,7 +111,7 @@ function showProfileSummary() {
   const units     = completed.reduce((s, c) => s + (+c.units || 0), 0);
   const xferPart  = xfer.length ? ` · ${xfer.length} transfer credit${xfer.length !== 1 ? "s" : ""}` : "";
   el.innerHTML = `
-    <strong>${profile.major}</strong>${profile.minor ? ` + ${profile.minor}` : ""}<br>
+    <strong>${profile.major || "Major not set"}</strong>${profile.minor ? ` + ${profile.minor}` : ""}<br>
     ${uciOnly.length} UCI courses${xferPart} · ${units} total units<br>
     Expected graduation: ${profile.grad_expected}
   `;

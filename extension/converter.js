@@ -5,7 +5,8 @@
 
 // ── State ──────────────────────────────────────────────────────
 
-let courses = [];   // Course rows parsed from the CSV
+let courses = [];       // Course rows parsed from the CSV
+let profileMeta = {};   // _profile_* rows (major, minor, catalog_year, audit_term)
 
 // ── Drag & drop + file input ───────────────────────────────────
 
@@ -35,7 +36,7 @@ async function loadCSV(file) {
 
   try {
     const text = await file.text();
-    const { courses: parsed, error } = ZotlerCSV.parse(text);
+    const { courses: parsed, profileMeta: meta, error } = ZotlerCSV.parse(text);
 
     if (error) {
       showError(error);
@@ -43,6 +44,7 @@ async function loadCSV(file) {
     }
 
     courses = parsed;
+    profileMeta = meta;
     showReview();
 
   } catch (err) {
@@ -163,9 +165,13 @@ document.getElementById("close-btn").addEventListener("click", () => window.clos
 async function saveProfile(allCourses) {
   const stored  = await storageGet("profile");
   const profile = stored || {
-    major: "Computer Science B.S.", minor: null, grad_expected: "Spring 2026", courses: []
+    major: "", minor: null, grad_expected: "Spring 2026", courses: []
   };
   profile.courses = allCourses;
+  if (profileMeta.major) profile.major = profileMeta.major;
+  if ("minor" in profileMeta) profile.minor = profileMeta.minor || null;
+  if (profileMeta.catalog_year) profile.catalog_year = profileMeta.catalog_year;
+  if (profileMeta.audit_term) profile.audit_term = profileMeta.audit_term;
   await storageSet("profile", profile);
 
   document.getElementById("step-review").classList.add("hidden");
@@ -176,6 +182,7 @@ async function saveProfile(allCourses) {
   const transfer  = allCourses.filter(c => c.source === "transfer").length;
   let msg = `${allCourses.length} courses imported — ${completed.length} completed (${units} units)`;
   if (transfer) msg += `, including ${transfer} transfer credit${transfer !== 1 ? "s" : ""}`;
+  if (profileMeta.major) msg += `. Major set to ${profileMeta.major}`;
   document.getElementById("done-msg").textContent = msg + ".";
 }
 

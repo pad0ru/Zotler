@@ -3,7 +3,7 @@
 // ── State ──────────────────────────────────────────────────────
 
 let profile = {
-  major: "Computer Science B.S.",
+  major: "",       // auto-filled from the DegreeWorks CSV import
   minor: null,
   grad_expected: "Spring 2026",
   courses: [],   // loaded from user_courses.csv import
@@ -148,15 +148,17 @@ function buildSystemPrompt() {
   return `You are Zotler, a UCI academic planning assistant. Answer questions about the student's degree, courses, minors, and graduation timeline. Be concise and specific. Format responses using only simple HTML: <p>, <ul>, <li>, <strong>, <em>. Do not use markdown syntax.
 
 Student profile:
-- Major: ${profile.major}
-- Minor: ${profile.minor ?? "none"}
+- Major: ${profile.major || "not set — ask the student to import their DegreeWorks audit"}
+- Minor: ${profile.minor ?? "none"}${profile.catalog_year ? `\n- Catalog year: ${profile.catalog_year}` : ""}
 - Expected graduation: ${profile.grad_expected}
 - Completed courses (${completed.length}): ${courseList}
 
 UCI degree requirements:
 ${REQUIREMENTS}
 
-Transfer credits count toward requirements — treat any course marked "(transfer from ...)" as completed. Always end with a brief note to verify official decisions with an ICS counselor.`;
+Transfer credits count toward requirements — treat any course marked "(transfer from ...)" as completed.
+
+If the answer is not supported by the student's profile or the requirements listed above, or you are unsure, say you don't know and suggest asking a school counselor — never guess or invent courses, requirements, or policies. Do not add a disclaimer at the end of your answer; one is appended automatically.`;
 }
 
 let conversationHistory = [];
@@ -176,30 +178,53 @@ async function callGemini(userMessage) {
 
   conversationHistory.push({ role: "user", parts: [{ text: userMessage }] });
 
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(key)}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        system_instruction: { parts: [{ text: buildSystemPrompt() }] },
-        contents: conversationHistory,
-        generationConfig: { maxOutputTokens: 600, temperature: 0.2 },
-      }),
-    }
-  );
+  // Retry on transient overload/rate-limit errors (429/503) with backoff.
+  let res;
+  for (let attempt = 0; ; attempt++) {
+    res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${encodeURIComponent(key)}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          system_instruction: { parts: [{ text: buildSystemPrompt() }] },
+          contents: conversationHistory,
+          generationConfig: {
+            // Thinking tokens count against this cap on Gemini 3.x, so it needs
+            // headroom beyond the visible answer length.
+            maxOutputTokens: 4096,
+            temperature: 0.2,
+          },
+        }),
+      }
+    );
+    if (res.ok || (res.status !== 429 && res.status !== 503) || attempt >= 3) break;
+    await new Promise(r => setTimeout(r, 1500 * 2 ** attempt));
+  }
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     conversationHistory.pop();
-    throw new Error(err.error?.message ?? `HTTP ${res.status}`);
+    const msg = err.error?.message ?? `HTTP ${res.status}`;
+    throw new Error(
+      res.status === 429 || res.status === 503
+        ? `Gemini is overloaded right now (tried 4 times). Wait a minute and ask again. [${msg}]`
+        : msg
+    );
   }
 
   const data = await res.json();
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text ?? "No response received.";
+  const parts = data.candidates?.[0]?.content?.parts ?? [];
+  // Thinking models may split the answer across parts; skip thought parts.
+  const text = parts.filter(p => p.text && !p.thought).map(p => p.text).join("") || "No response received.";
   conversationHistory.push({ role: "model", parts: [{ text }] });
-  return text;
+  return text + DISCLAIMER_HTML;
 }
+
+// Appended to every AI answer (code-side, so the model can't forget it).
+const DISCLAIMER_HTML =
+  `<p style="margin-top:8px;padding-top:6px;border-top:1px solid #e3e6ea;font-size:11px;color:#8a94a0;font-style:italic">` +
+  `Zotler might make mistakes — ask a school counselor for the most accurate information.</p>`;
 
 // ── Chrome storage helpers ─────────────────────────────────────
 
