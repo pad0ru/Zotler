@@ -12,16 +12,19 @@ let profile = {
 // ── Boot ───────────────────────────────────────────────────────
 
 (async () => {
-  const [stored, geminiKey] = await Promise.all([
+  const [stored, localAI] = await Promise.all([
     storageGet("profile"),
-    storageGet("geminiKey"),
+    storageGet("localAI"),
   ]);
   if (stored) {
     profile = { ...profile, ...stored };
     applyProfileToFields();
     if (profile.courses.length > 0) showProfileSummary();
   }
-  if (geminiKey) document.getElementById("set-gemini-key").value = geminiKey;
+  if (localAI) {
+    document.getElementById("set-local-url").value = localAI.url || "http://localhost:1234";
+    document.getElementById("set-local-model").value = localAI.model || "";
+  }
 })();
 
 function applyProfileToFields() {
@@ -33,13 +36,14 @@ function applyProfileToFields() {
 // ── Save ───────────────────────────────────────────────────────
 
 document.getElementById("save-settings-btn").addEventListener("click", () => {
+  let localAI;
+  try { localAI = readLocalSettings(); }
+  catch (error) { document.getElementById("local-status").textContent = error.message; return; }
+  storageSet("localAI", localAI);
   profile.major = document.getElementById("set-major").value.trim();
   profile.minor = document.getElementById("set-minor").value.trim() || null;
   profile.grad_expected = document.getElementById("set-grad").value;
   storageSet("profile", profile);
-
-  const apiKey = document.getElementById("set-gemini-key").value.trim();
-  if (apiKey) storageSet("geminiKey", apiKey);
 
   const flag = document.getElementById("saved-flag");
   flag.classList.remove("hidden");
@@ -136,3 +140,23 @@ function storageSet(key, value) {
     localStorage.setItem(key, JSON.stringify(value));
   }
 }
+
+function readLocalSettings() {
+  return ZotlerLocalAI.validate({
+    url: document.getElementById("set-local-url").value,
+    model: document.getElementById("set-local-model").value,
+  });
+}
+
+document.getElementById("test-local-btn").addEventListener("click", async () => {
+  const button = document.getElementById("test-local-btn");
+  const status = document.getElementById("local-status");
+  button.disabled = true;
+  status.textContent = "Testing model… First load may take a moment.";
+  try {
+    const config = readLocalSettings();
+    await ZotlerLocalAI.chat(config, [{ role: "user", content: "Reply with: Connection successful." }]);
+    status.textContent = "Connected to " + config.model + ". Save Settings to use it.";
+  } catch (error) { status.textContent = error.message; }
+  finally { button.disabled = false; }
+});

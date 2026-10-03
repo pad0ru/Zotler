@@ -1,0 +1,17 @@
+html, body { height: auto; min-height: 100%; overflow: auto; }
+.guide-page { width: 100%; max-width: 900px; margin: 0 auto; padding: 32px 24px 64px; display: flex; flex-direction: column; gap: 24px; line-height: 1.6; }
+.guide-page h1 { font-size: 26px; margin-bottom: 8px; }
+.guide-page h2 { font-size: 18px; }
+.guide-page a { color: var(--uci-light); }
+.guide-page p { color: var(--text-sub); }
+.guide-card { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+.guide-card ol { padding-left: 24px; }
+.guide-card li + li { margin-top: 12px; }
+.markdown-content > * + * { margin-top: 16px; }
+.markdown-content ul { padding-left: 24px; }
+.markdown-content pre { white-space: pre-wrap; overflow-wrap: anywhere; background: var(--bg); padding: 12px; border-radius: 8px; }
+#copy-prompt:disabled { opacity: 0.6; cursor: wait; }
+.copy-row { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+#csv-prompt { width: 100%; min-height: 480px; padding: 16px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); font: 13px/1.6 ui-monospace, monospace; resize: vertical; }
+.guide-page :focus-visible { outline: 3px solid var(--uci-light); outline-offset: 3px; }
+@media (max-width: 540px) { .guide-page { padding: 24px 16px 40px; } .guide-card { padding: 18px; } }

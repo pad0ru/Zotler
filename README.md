@@ -148,3 +148,9 @@ Open design questions for making the import robust, not just happy-path:
 - [ ] Proxy LLM calls through a backend so the API key isn't shipped in the extension
 - [ ] Pull live course data from WebSOC / UCI Catalogue
 - [ ] Resolve open questions OQ-01 through OQ-05 via Fall 2026 surveys and interviews
+- [ ] Reduce AI hallucination in chat responses
+- [ ] Ask ICSSC (for guidance/collaboration — TBD scope)
+- [ ] Use SQLite for local data storage
+- [ ] Email UCI OIT for ZotGPT access
+- [ ] Record demo
+- [ ] assist.org API — determine if we need it or not

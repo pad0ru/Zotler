@@ -87,13 +87,22 @@
       </div>
     </div>
 
-    <!-- AI key -->
+    <!-- Local AI -->
     <div class="settings-card">
       <h2>AI Assistant</h2>
+      <p class="import-hint">Alpha testing uses your local Gemma model through LM Studio. No API key is required.</p>
       <div class="field">
-        <label>Gemini API Key</label>
-        <input type="password" id="set-gemini-key" placeholder="AIza…" autocomplete="off" />
-        <span class="import-hint">Get a free key at aistudio.google.com → "Get API key". Make sure the Generative Language API is enabled.</span>
+        <label for="set-local-url">Local LM Studio server</label>
+        <input type="text" id="set-local-url" value="http://localhost:1234" />
+      </div>
+      <div class="field">
+        <label for="set-local-model">Installed model name</label>
+        <input type="text" id="set-local-model" placeholder="Your Gemma model identifier" />
+        <span class="import-hint">Enter the model identifier shown in LM Studio’s Developer tab.</span>
+      </div>
+      <div class="save-row">
+        <button type="button" id="test-local-btn" class="btn-primary">Test connection</button>
+        <span id="local-status" role="status" aria-live="polite"></span>
       </div>
     </div>
 
@@ -101,9 +110,8 @@
     <div class="settings-card">
       <h2>Courses</h2>
       <p class="import-hint">
-        Import your DegreeWorks CSV — generate it with the prompt in the
-        <a href="https://docs.google.com/document/d/1qFtj0sL0nvSMTMW-youA0BCI1rTfHbrPS1s51MULYs0/edit"
-           target="_blank" rel="noopener">tutorial</a>,
+        Import your DegreeWorks CSV — generate it with the instructions and prompt in the
+        <a href="instructions.html" target="_blank" rel="noopener">DegreeWorks CSV guide</a>,
         then drop the file here. It's parsed on your device and your courses load automatically.
       </p>
       <div class="upload-zone" id="upload-zone">
@@ -123,6 +131,7 @@
   </div>
 
   <script src="csv-import.js"></script>
+  <script src="local-ai.js"></script>
   <script src="settings.js"></script>
 </body>
 </html>

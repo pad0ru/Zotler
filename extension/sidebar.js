@@ -19,6 +19,7 @@ let profile = {
 
 // Auto-refresh when the settings tab saves a new profile
 chrome.storage.onChanged.addListener((changes) => {
+  if (changes.localAI) conversationHistory = [];
   if (changes.profile) {
     profile = { ...profile, ...changes.profile.newValue };
     conversationHistory = [];
@@ -42,6 +43,7 @@ const messagesEl   = document.getElementById("messages");
 const suggestionsEl = document.getElementById("suggestions");
 const inputEl      = document.getElementById("user-input");
 let chatStarted    = false;
+let replyPending = false;
 
 function setupInput() {
   inputEl.addEventListener("keydown", e => {
@@ -60,7 +62,9 @@ function sendSuggestion(btn) {
 
 async function sendMessage() {
   const text = inputEl.value.trim();
-  if (!text) return;
+  if (!text || replyPending) return;
+  replyPending = true;
+  document.getElementById("send-btn").disabled = true;
 
   if (!chatStarted) {
     suggestionsEl.classList.add("hidden");
@@ -73,12 +77,15 @@ async function sendMessage() {
 
   const typingEl = appendTyping();
   try {
-    const reply = await callGemini(text);
+    const reply = await callLocalAI(text);
     removeTyping(typingEl);
     appendMessage("assistant", reply, true);
   } catch (err) {
     removeTyping(typingEl);
-    appendMessage("assistant", `<p style="color:#e74c3c">Error: ${err.message}</p>`, true);
+    appendMessage("assistant", `<p style="color:#e74c3c">Error: ${escapeHTML(err.message)}</p>`, true);
+  } finally {
+    replyPending = false;
+    document.getElementById("send-btn").disabled = false;
   }
 }
 
@@ -105,7 +112,7 @@ function appendTyping() {
 }
 function removeTyping(el) { el.remove(); }
 
-// ── Mock AI response engine ────────────────────────────────────
+// ── AI response engine ────────────────────────────────────
 
 function normalizeCourseId(id) {
   return (id || "").toUpperCase()
@@ -119,7 +126,7 @@ const COMPLETED_IDS = () => new Set(
   profile.courses.filter(c => c.status === "completed").map(c => normalizeCourseId(c.course_id))
 );
 
-// ── Degree requirements context (injected into every Gemini call) ─
+// ── Degree requirements context (injected into every local model call) ─
 
 const REQUIREMENTS = `
 CS B.S. Lower Division (all required): ICS 31, ICS 32, ICS 33, ICS 45C (or ICS 45J), ICS 46, ICS 6B, ICS 6D, MATH 2A, MATH 2B, STATS 67
@@ -145,7 +152,7 @@ function buildSystemPrompt() {
       }).join(", ")
     : "none imported yet — ask the student to import their transcript";
 
-  return `You are Zotler, a UCI academic planning assistant. Answer questions about the student's degree, courses, minors, and graduation timeline. Be concise and specific. Format responses using only simple HTML: <p>, <ul>, <li>, <strong>, <em>. Do not use markdown syntax.
+  return `You are Zotler, a UCI academic planning assistant. Answer questions about the student's degree, courses, minors, and graduation timeline. Be concise and specific. Use plain text, with short paragraphs and simple lists. Do not output HTML.
 
 Student profile:
 - Major: ${profile.major || "not set — ask the student to import their DegreeWorks audit"}
@@ -163,62 +170,25 @@ If the answer is not supported by the student's profile or the requirements list
 
 let conversationHistory = [];
 
-async function callGemini(userMessage) {
+async function callLocalAI(userMessage) {
   if (userMessage.toLowerCase() === "debug courses") {
     const ids = [...COMPLETED_IDS()].sort();
-    return ids.length
-      ? `<p><strong>Stored completed course IDs (${ids.length}):</strong></p><pre style="font-size:11px;overflow-x:auto">${ids.join("\n")}</pre>`
-      : `<p>No completed courses in profile. Import your transcript first.</p>`;
+    return ids.length ? `<p>Stored completed course IDs (${ids.length}):</p><p>${escapeHTML(ids.join(", "))}</p>` : "<p>No completed courses in profile. Import your transcript first.</p>";
   }
+  const config = await storageGet("localAI");
+  if (!config?.model) return "<p>Open Settings, enter your local LM Studio server and Gemma model name, test the connection, and save.</p>";
+  const messages = [
+    { role: "system", content: buildSystemPrompt() },
+    ...conversationHistory,
+    { role: "user", content: userMessage },
+  ];
+  const text = await ZotlerLocalAI.chat(config, messages);
+  conversationHistory.push({ role: "user", content: userMessage }, { role: "assistant", content: text });
+  return `<p style="white-space:pre-wrap">${escapeHTML(text)}</p>` + DISCLAIMER_HTML;
+}
 
-  const key = await storageGet("geminiKey");
-  if (!key) {
-    return `<p>Add your Gemini API key in ⚙ Settings to enable AI responses. Get a free key at <em>aistudio.google.com</em>.</p>`;
-  }
-
-  conversationHistory.push({ role: "user", parts: [{ text: userMessage }] });
-
-  // Retry on transient overload/rate-limit errors (429/503) with backoff.
-  let res;
-  for (let attempt = 0; ; attempt++) {
-    res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${encodeURIComponent(key)}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          system_instruction: { parts: [{ text: buildSystemPrompt() }] },
-          contents: conversationHistory,
-          generationConfig: {
-            // Thinking tokens count against this cap on Gemini 3.x, so it needs
-            // headroom beyond the visible answer length.
-            maxOutputTokens: 4096,
-            temperature: 0.2,
-          },
-        }),
-      }
-    );
-    if (res.ok || (res.status !== 429 && res.status !== 503) || attempt >= 3) break;
-    await new Promise(r => setTimeout(r, 1500 * 2 ** attempt));
-  }
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    conversationHistory.pop();
-    const msg = err.error?.message ?? `HTTP ${res.status}`;
-    throw new Error(
-      res.status === 429 || res.status === 503
-        ? `Gemini is overloaded right now (tried 4 times). Wait a minute and ask again. [${msg}]`
-        : msg
-    );
-  }
-
-  const data = await res.json();
-  const parts = data.candidates?.[0]?.content?.parts ?? [];
-  // Thinking models may split the answer across parts; skip thought parts.
-  const text = parts.filter(p => p.text && !p.thought).map(p => p.text).join("") || "No response received.";
-  conversationHistory.push({ role: "model", parts: [{ text }] });
-  return text + DISCLAIMER_HTML;
+function escapeHTML(text) {
+  return text.replace(/[&<>"']/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]);
 }
 
 // Appended to every AI answer (code-side, so the model can't forget it).

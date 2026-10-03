@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Zotler — DegreeWorks CSV Guide</title>
+  <link rel="stylesheet" href="sidebar.css" />
+  <link rel="stylesheet" href="instructions.css" />
+</head>
+<body>
+  <header><div class="logo"><img src="icons/icon48.png" alt="" width="24" height="24" /><span class="logo-text">Zotler CSV Guide</span></div></header>
+  <main class="guide-page">
+    <a href="settings.html">← Back to Settings</a>
+    <div><h1>Create your DegreeWorks CSV</h1><p>Follow these steps to prepare your courses for Zotler.</p></div>
+    <section class="guide-card" aria-labelledby="steps-title">
+      <h2 id="steps-title">Instructions</h2>
+      <div id="instructions-content" class="markdown-content" aria-live="polite">Loading instructions…</div>
+    </section>
+    <section class="guide-card" aria-labelledby="prompt-title">
+      <h2 id="prompt-title">Prompt to use</h2>
+      <p>Copy this prompt into your AI chat, then paste your DegreeWorks worksheet text after it.</p>
+      <div class="copy-row"><button type="button" class="btn-primary" id="copy-prompt" disabled>Copy prompt</button><span id="copy-status" role="status" aria-live="polite"></span></div>
+      <label for="csv-prompt">Full CSV extraction prompt</label>
+      <textarea id="csv-prompt" readonly spellcheck="false" placeholder="Loading prompt…"></textarea>
+    </section>
+    <section class="guide-card" aria-labelledby="import-title">
+      <h2 id="import-title">Save and import the CSV</h2>
+      <ol>
+        <li>Ask the AI to provide a downloadable CSV, or copy its CSV output into a plain text file and save it as <code>degreeworks.csv</code>.</li>
+        <li>Check that the first line contains the 12 column names shown in the prompt, and review the extracted courses for accuracy.</li>
+        <li>Return to <a href="settings.html">Settings</a> and use <strong>Choose CSV</strong> or drag the file into the Courses upload area.</li>
+      </ol>
+    </section>
+  </main>
+  <script src="instructions.js"></script>
+</body>
+</html>
