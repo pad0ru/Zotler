@@ -34,7 +34,7 @@ const reply = (status, body) => async () => ({ status, ok: status < 400, json: a
 test("signed-out reply records signed_out", async () => {
   const result = await sync({ fetchImpl: reply(401, {}) });
   assert.strictEqual(result.status, "signed_out");
-  assert.match(describe(result), /Sign in/);
+  assert.match(describe(result), /Open antalmanac\.com/);
 });
 
 test("signed-in reply stores a resolved plan", async () => {

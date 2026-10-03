@@ -52,9 +52,29 @@
     }
   }
 
+  // From an extension page the browser may withhold the student's AntAlmanac
+  // cookie, so ask an open antalmanac.com tab to do the fetch for us. Returns
+  // null when no tab responds (none open, or opened before the extension loaded).
+  async function syncViaTab() {
+    if (!chrome.tabs || !chrome.tabs.query) return null;
+    let tabs = [];
+    try { tabs = await chrome.tabs.query({ url: ORIGIN + "/*" }); } catch { return null; }
+    for (const tab of tabs) {
+      try {
+        const result = await chrome.tabs.sendMessage(tab.id, { type: "zotler-antalmanac-sync" });
+        if (result) return result;
+      } catch { /* no content script in this tab */ }
+    }
+    return null;
+  }
+
   // Concurrent callers share one in-flight sync.
-  function sync({ url = ORIGIN + SCHEDULE_PATH, fetchImpl = fetch.bind(global) } = {}) {
-    if (!syncing) syncing = runSync(url, fetchImpl).finally(() => { syncing = null; });
+  function sync({ url, fetchImpl } = {}) {
+    if (!syncing) {
+      const direct = () => runSync(url || ORIGIN + SCHEDULE_PATH, fetchImpl || fetch.bind(global));
+      syncing = (fetchImpl ? direct() : syncViaTab().then(result => result || direct()))
+        .finally(() => { syncing = null; });
+    }
     return syncing;
   }
 
@@ -64,7 +84,7 @@
     const time = new Date(sync.at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
     return {
       synced: `Synced ${sync.count} planned class${sync.count !== 1 ? "es" : ""} from AntAlmanac · ${time}`,
-      signed_out: "Sign in at antalmanac.com to sync your planned classes automatically",
+      signed_out: "Open antalmanac.com (signed in) in a tab to sync your planned classes",
       no_schedules: "No saved AntAlmanac schedules yet — save one in AntAlmanac and it will appear here",
       error: `AntAlmanac sync failed: ${sync.message || "unknown error"}`,
     }[sync.status] || "";
@@ -80,6 +100,12 @@
       if (document.visibilityState === "visible") sync({ url: SCHEDULE_PATH, fetchImpl: pageFetch });
     };
     pageSync();
+    // Lets the sidebar and Settings trigger a sync through this tab's login.
+    chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
+      if (!msg || msg.type !== "zotler-antalmanac-sync") return;
+      sync({ url: SCHEDULE_PATH, fetchImpl: pageFetch }).then(sendResponse);
+      return true;
+    });
     document.addEventListener("visibilitychange", pageSync);
     global.addEventListener("focus", pageSync);
     setInterval(pageSync, POLL_MS);
