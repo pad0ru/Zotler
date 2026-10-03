@@ -4,16 +4,16 @@ An AI-powered academic planning assistant for UCI students, built as a cross-bro
 
 ---
 
-## What's Been Built (Scripted Demo v0.2)
+## What's Been Built (Local AI Alpha)
 
 ### Browser Extension (`extension/`)
 
 A persistent sidebar panel (Manifest V3, runs in **Chrome and Firefox**) that opens alongside any webpage:
 
 - **Chat UI** — conversation interface with typing indicator and quick-suggestion chips
-- **Scripted demo responses (no live AI)** — the assistant runs three **pre-staged flows** — "Can I add a CS minor?", "What should I take next quarter?", and "When can I graduate?" — matched to whatever the presenter types or clicks by keyword. A short randomized delay simulates model latency so the typing indicator reads as real, and an off-script fallback steers the conversation back to the three supported flows. **No API is called and no data leaves the device.** The intent is a controllable, repeatable demo for feedback sessions, not a working AI backend.
-- **Full-page Settings tab** — clicking ⚙ opens a dedicated browser tab (roomier than the narrow side panel) to set declared major, minor, expected graduation, an (inert) Gemini API-key field, and to import your courses. Saves to `chrome.storage.local`; the sidebar auto-refreshes the moment settings change.
-- **DegreeWorks CSV import** — copy your DegreeWorks audit, paste it into any AI (Gemini/Claude/ChatGPT/DeepSeek) with the provided prompt to get a structured 12-column CSV, then drag-and-drop that CSV into either the converter tab **or** the Settings tab — both share one importer (`csv-import.js`). It's parsed on-device — no server, no upload. A **📖 How it works** button links to the step-by-step tutorial. Because the AI classifies everything up front, transfer credits, AP credits, and in-progress/planned courses all import in one pass.
+- **Local AI chat (Gemma via LM Studio)** — the sidebar chat calls a model running on your own machine through LM Studio's OpenAI-compatible `POST /v1/chat/completions` endpoint (shared client in [`local-ai.js`](extension/local-ai.js)). Each request includes your profile, completed courses, requirements context, and session history. Only `localhost` / `127.0.0.1` over HTTP is allowed, so **no data leaves your device**. Replies are non-streaming with a 3-minute timeout to allow for model loading; history is cleared when the profile or model settings change. Setup and troubleshooting: [`LOCAL_TESTING.md`](LOCAL_TESTING.md). This is an alpha — end-to-end generation is still being verified on real hardware.
+- **Full-page Settings tab** — clicking ⚙ opens a dedicated browser tab (roomier than the narrow side panel) to set declared major, minor, expected graduation, the local AI server URL and model name (with a **Test connection** button), and to import your courses. Saves to `chrome.storage.local`; the sidebar auto-refreshes the moment settings change.
+- **DegreeWorks CSV import** — copy your DegreeWorks audit, paste it into any AI (Gemini/Claude/ChatGPT/DeepSeek) with the provided prompt to get a structured 12-column CSV, then drag-and-drop that CSV into either the converter tab **or** the Settings tab — both share one importer (`csv-import.js`). It's parsed on-device — no server, no upload. A **📖 How it works** button opens the step-by-step guide bundled with the extension (see below). Because the AI classifies everything up front, transfer credits, AP credits, and in-progress/planned courses all import in one pass.
 - **Course-ID normalization** — both the DegreeWorks `I&CSCI 45J` and transcript `I & C SCI 45J` forms normalize to `ICS 45J` so degree/minor matching works regardless of how courses are labeled.
 - **Status & source awareness** — each row carries its `status` (completed / in_progress / planned) and `source` (uci / transfer / ap), with transfer origin (e.g. SAC, GWC, UCR) preserved so transfers are recognized as completed toward requirements.
 - **`chrome.storage.local`** — all profile data stored locally; no server required
@@ -48,11 +48,11 @@ Two CSV files that serve as the prototype's data layer:
 
 ## DegreeWorks CSV Import — How It Works
 
-The converter no longer parses a PDF directly. Instead it ingests a CSV that you generate from your DegreeWorks audit with the help of any AI. See the [tutorial](https://docs.google.com/document/d/1qFtj0sL0nvSMTMW-youA0BCI1rTfHbrPS1s51MULYs0/edit) (also linked in-app via the **📖 How it works** button) for the full prompt.
+The converter no longer parses a PDF directly. Instead it ingests a CSV that you generate from your DegreeWorks audit with the help of any AI. The step-by-step guide is bundled with the extension (`instructions.html`, opened from Settings → Courses via **📖 How it works**) and rendered from two Markdown files you can edit directly: `extension/Instructions/Instructions.md` (user steps) and `extension/Instructions/Prompt.md` (the full extraction prompt, with a copy button). Refresh the guide after editing. The prompt asks the AI for a downloadable UTF-8 `degreeworks.csv`, falling back to raw CSV text if it can't create files.
 
 ### The flow
 1. **Extract** — Open DegreeWorks in your student portal, select all (Ctrl/Cmd+A), and copy the text.
-2. **Process with AI** — Paste it into Gemini / Claude / ChatGPT / DeepSeek along with the tutorial prompt.
+2. **Process with AI** — Paste it into Gemini / Claude / ChatGPT / DeepSeek along with the prompt from the guide.
 3. **Generate CSV** — The AI returns a single 12-column CSV.
 4. **Import** — Drag-and-drop that CSV into the Zotler converter tab, review the rows, and save.
 
@@ -78,7 +78,7 @@ The importer parses the CSV entirely in the browser (RFC-4180 quoted-field handl
 |---|---|
 | Browser Extension | Manifest V3, cross-browser (Chrome **Side Panel API** + Firefox **Sidebar API**), `chrome.storage.local` |
 | Course import | DegreeWorks → AI-generated 12-column CSV, parsed on-device |
-| AI (demo) | **None live** — scripted keyword-matched responses with simulated latency ([`sidebar.js`](extension/sidebar.js)). The Gemini key field is a placeholder for a future live version |
+| AI (alpha) | **Local Gemma via LM Studio** (`/v1/chat/completions` on localhost), client in [`local-ai.js`](extension/local-ai.js). Gemini is no longer called by the chat |
 | Website | Vanilla HTML/CSS/JS, PDF.js (CDN) — legacy onboarding flow |
 | Scraper | Python 3, `requests`, `beautifulsoup4`, `pdfplumber`, `selenium`, `webdriver-manager` |
 | Data | CSV (no database in prototype phase) |
@@ -87,7 +87,7 @@ The importer parses the CSV entirely in the browser (RFC-4180 quoted-field handl
 
 ## Project Status
 
-This is a **scripted demo build** (Summer 2026). The chat assistant's answers are **hardcoded, pre-staged flows** — there is no LLM, no backend, and no network call from the chat. This is deliberate: the demo needs to be controllable and repeatable on stage for Iteration 2 feedback sessions, without the variability (or cost, or latency) of a live model. The DegreeWorks CSV import is real and parses on-device; all profile data stays in `chrome.storage.local`. Wiring the chat to a real LLM is future work (see Roadmap). The goal is a tangible, demoable artifact for feedback sessions when school resumes in Fall 2026.
+This is a **local-AI alpha build** (Fall 2026). The chat talks to a model you run yourself through LM Studio (tested target: `google/gemma-4-12b-qat`); there is no hosted backend and no cloud API call. The DegreeWorks CSV import is real and parses on-device; all profile data stays in `chrome.storage.local`. Still being verified: a successful in-extension generation on real hardware (an early direct test timed out), plus the full DegreeWorks → CSV → import → chat workflow. The earlier scripted demo flows have been replaced. The goal is a tangible, demoable artifact for feedback sessions in Fall 2026.
 
 See the [Requirements Document](https://www.notion.so/) for the full RE iteration log, open questions, and architecture decisions.
 
@@ -99,7 +99,8 @@ See the [Requirements Document](https://www.notion.so/) for the full RE iteratio
 1. Open `chrome://extensions` → enable **Developer mode**
 2. Click **Load unpacked** → select the `extension/` folder
 3. Click the Zotler icon to open the side panel, then ⚙ to open the **Settings tab**
-4. (Optional) import your courses: generate the CSV from DegreeWorks using the in-app **📖 How it works** tutorial and drop it into the converter — your courses load on-device. **No API key is needed** — the chat is scripted. To see the demo, click a suggestion chip or ask about a **CS minor**, **next quarter**, or your **graduation timeline**
+4. Start LM Studio's local server with a Gemma model loaded (see [`LOCAL_TESTING.md`](LOCAL_TESTING.md)). In Settings → AI Assistant, enter `http://localhost:1234` (no `/v1`) and the exact model identifier, click **Test connection**, then **Save Settings**. If requests are blocked, enable CORS in LM Studio's server settings. No API key is needed
+5. (Optional) import your courses: generate the CSV from DegreeWorks using the in-app **📖 How it works** guide and drop it into the converter — your courses load on-device. Then ask the sidebar about a **CS minor**, **next quarter**, or your **graduation timeline**
 
 **Firefox:**
 1. Open `about:debugging#/runtime/this-firefox`
@@ -140,12 +141,15 @@ Open design questions for making the import robust, not just happy-path:
 
 ## Roadmap (temp)
 
-- [ ] Replace the scripted chat with real LLM calls (e.g. Gemini `gemini-2.0-flash`), grounded in the student's courses + UCI requirements (the Settings key field is wired for this)
+- [x] Replace the scripted chat with a local LLM (Gemma via LM Studio), grounded in the student's courses + requirements
+- [ ] Verify local generation end-to-end (diagnose the 12B model timeout), then consider streaming, elapsed-time feedback, and cancellation
+- [ ] Add reproducible tests for the local AI client and CSV import (`npm test` is currently a placeholder)
+- [ ] Work through the backlog in `FIX_NEXT_TIME.md`
 - [x] Import transfer/AP credits in one pass via the DegreeWorks CSV flow (replaces the separate ASSIST converter step)
 - [x] Capture in-progress and planned courses from the audit (status derived by the AI)
 - [ ] Harden CSV import: alternative/error flows for non-CSV or wrong-format files (see TODO above)
 - [ ] Validate CSV *content* for absurd/incorrect data (wrong req block, impossible grades/units, non-existent courses)
-- [ ] Proxy LLM calls through a backend so the API key isn't shipped in the extension
+- [ ] If a hosted LLM is ever added, proxy calls through a backend so no API key ships in the extension
 - [ ] Pull live course data from WebSOC / UCI Catalogue
 - [ ] Resolve open questions OQ-01 through OQ-05 via Fall 2026 surveys and interviews
 - [ ] Reduce AI hallucination in chat responses
