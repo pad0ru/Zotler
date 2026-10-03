@@ -4,7 +4,8 @@
   "description": "An AI-powered academic planning assistant for UCI students, built as a Chrome Extension. Ask natural-language questions about your degree, explore major/minor options, and generate a graduation timeline — all from your browser, with your data staying on your device.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --test tests/*.test.js",
+    "vendor": "mkdir -p extension/vendor && cp node_modules/sql.js/dist/sql-wasm.js node_modules/sql.js/dist/sql-wasm.wasm extension/vendor/"
   },
   "repository": {
     "type": "git",
@@ -20,5 +21,8 @@
   "homepage": "https://github.com/pad0ru/Zotler#readme",
   "dependencies": {
     "pdfjs-dist": "^6.0.227"
+  },
+  "devDependencies": {
+    "sql.js": "^1.14.2"
   }
 }

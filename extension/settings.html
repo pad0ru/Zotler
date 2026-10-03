@@ -122,6 +122,33 @@
         <p id="import-status" class="import-hint" style="margin-top:10px">No courses loaded</p>
       </div>
       <div id="profile-summary" class="profile-summary hidden"></div>
+
+      <h2 style="margin-top:22px">Planned classes (AntAlmanac)</h2>
+      <p class="import-hint">
+        Your saved schedules sync automatically when you're signed in to
+        <a href="https://antalmanac.com" target="_blank" rel="noopener">AntAlmanac</a> in this browser — nothing to export.
+      </p>
+      <div class="save-row">
+        <span id="plan-status" role="status" aria-live="polite">Checking AntAlmanac…</span>
+        <button type="button" id="sync-plan-btn" class="btn-primary">Sync now</button>
+      </div>
+      <div id="plan-summary" class="profile-summary hidden"></div>
+      <div class="save-row">
+        <button type="button" id="download-plan-btn" class="btn-primary hidden">Download student_plan.sqlite</button>
+      </div>
+      <details style="margin-top:12px">
+        <summary class="import-hint" style="cursor:pointer">Not using an AntAlmanac account? Import an export file instead</summary>
+        <p class="import-hint">
+          In AntAlmanac, turn on <strong>Dev mode</strong> in its settings, then use
+          <strong>Import/Export → Export</strong> and drop the JSON file here.
+        </p>
+        <div class="upload-zone" id="plan-upload-zone">
+          <input type="file" id="import-plan" accept=".json,application/json" style="display:none" />
+          <div class="up-icon">🗓️</div>
+          <p>Drag &amp; drop your AntAlmanac export here</p>
+          <label for="import-plan" class="btn-primary" style="cursor:pointer;display:inline-block">Choose JSON</label>
+        </div>
+      </details>
     </div>
 
     <div class="save-row">
@@ -131,6 +158,9 @@
   </div>
 
   <script src="csv-import.js"></script>
+  <script src="vendor/sql-wasm.js"></script>
+  <script src="antalmanac-import.js"></script>
+  <script src="antalmanac-sync.js"></script>
   <script src="local-ai.js"></script>
   <script src="settings.js"></script>
 </body>

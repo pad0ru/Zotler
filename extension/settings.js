@@ -12,10 +12,13 @@ let profile = {
 // ── Boot ───────────────────────────────────────────────────────
 
 (async () => {
-  const [stored, localAI] = await Promise.all([
+  const [stored, localAI, plan] = await Promise.all([
     storageGet("profile"),
     storageGet("localAI"),
+    storageGet("plannedSchedule"),
   ]);
+  if (plan) { plannedSchedule = plan; showPlanSummary(); }
+  syncPlan();
   if (stored) {
     profile = { ...profile, ...stored };
     applyProfileToFields();
@@ -119,6 +122,111 @@ function showProfileSummary() {
     ${uciOnly.length} UCI courses${xferPart} · ${units} total units<br>
     Expected graduation: ${profile.grad_expected}
   `;
+}
+
+// ── AntAlmanac plan import ─────────────────────────────────────
+// Parsing, section lookup and SQLite export live in antalmanac-import.js → ZotlerAntAlmanac.
+
+let plannedSchedule = null;
+const planZone  = document.getElementById("plan-upload-zone");
+const planInput = document.getElementById("import-plan");
+
+planZone.addEventListener("dragover", e => { e.preventDefault(); planZone.classList.add("drag-over"); });
+planZone.addEventListener("dragleave", () => planZone.classList.remove("drag-over"));
+planZone.addEventListener("drop", e => {
+  e.preventDefault();
+  planZone.classList.remove("drag-over");
+  const f = e.dataTransfer.files[0];
+  if (f && f.name.toLowerCase().endsWith(".json")) handlePlanImport(f);
+  else setPlanStatus("Please drop the .json file exported from AntAlmanac.", true);
+});
+planInput.addEventListener("change", e => { if (e.target.files[0]) handlePlanImport(e.target.files[0]); });
+
+function setPlanStatus(msg, isError = false, isOk = false) {
+  const el = document.getElementById("plan-status");
+  el.textContent = msg;
+  el.style.color = isError ? "#e74c3c" : (isOk ? "#2ecc71" : "");
+}
+
+async function handlePlanImport(file) {
+  setPlanStatus("Looking up your sections…");
+  try {
+    const { plan, error } = await ZotlerAntAlmanac.importPlan(await file.text());
+    if (error) { setPlanStatus(error, true); return; }
+
+    plannedSchedule = plan;
+    storageSet("plannedSchedule", plan);
+    const missing = plan.rows.filter(r => !r.resolved).length;
+    let msg = `Imported ${plan.rows.length} section${plan.rows.length !== 1 ? "s" : ""} from ${plan.schedules.length} schedule${plan.schedules.length !== 1 ? "s" : ""}`;
+    if (missing) msg += ` · ${missing} section code${missing !== 1 ? "s" : ""} not found`;
+    setPlanStatus(msg, false, !missing);
+    showPlanSummary();
+  } catch (err) {
+    setPlanStatus(`Couldn't import that plan: ${err.message}`, true);
+  } finally {
+    planInput.value = "";
+  }
+}
+
+function showPlanSummary() {
+  const el = document.getElementById("plan-summary");
+  el.classList.remove("hidden");
+  el.innerHTML = plannedSchedule.schedules.map((name, i) => {
+    const rows = plannedSchedule.rows.filter(r => r.schedule_index === i);
+    const items = rows.map(r => r.resolved
+      ? `${escapeHTML(r.course_code)} ${escapeHTML(r.section_type || "")} (${escapeHTML(r.term)})`
+      : `<span style="color:#e74c3c">${escapeHTML(r.section_code)} not found (${escapeHTML(r.term)})</span>`);
+    const active = i === plannedSchedule.activeIndex ? " · active" : "";
+    return `<strong>${escapeHTML(name)}</strong>${active}<br>${items.join(", ") || "No classes"}`;
+  }).join("<br><br>");
+  document.getElementById("download-plan-btn").classList.remove("hidden");
+}
+
+document.getElementById("download-plan-btn").addEventListener("click", async () => {
+  if (!plannedSchedule) return;
+  try {
+    const SQL = await initSqlJs({ locateFile: f => `vendor/${f}` });
+    const bytes = ZotlerAntAlmanac.buildSqlite(SQL, plannedSchedule);
+    const url = URL.createObjectURL(new Blob([bytes], { type: "application/vnd.sqlite3" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "student_plan.sqlite";
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  } catch (err) {
+    setPlanStatus(`Couldn't build the SQLite file: ${err.message}`, true);
+  }
+});
+
+function escapeHTML(text) {
+  return String(text).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+// Automatic sync with the student's AntAlmanac account (antalmanac-sync.js)
+const syncBtn = document.getElementById("sync-plan-btn");
+
+async function syncPlan() {
+  syncBtn.disabled = true;
+  setPlanStatus("Checking AntAlmanac…");
+  try {
+    const sync = await ZotlerAntAlmanacSync.sync();
+    setPlanStatus(ZotlerAntAlmanacSync.describe(sync), sync.status === "error", sync.status === "synced");
+  } finally {
+    syncBtn.disabled = false;
+  }
+}
+syncBtn.addEventListener("click", syncPlan);
+
+// Refresh when a sync from an open AntAlmanac tab (or the sidebar) updates the plan
+if (typeof chrome !== "undefined" && chrome.storage) {
+  chrome.storage.onChanged.addListener(changes => {
+    if (changes.plannedSchedule && changes.plannedSchedule.newValue) {
+      plannedSchedule = changes.plannedSchedule.newValue;
+      showPlanSummary();
+    }
+    const sync = changes.antalmanacSync && changes.antalmanacSync.newValue;
+    if (sync) setPlanStatus(ZotlerAntAlmanacSync.describe(sync), sync.status === "error", sync.status === "synced");
+  });
 }
 
 // ── Chrome storage helpers ─────────────────────────────────────

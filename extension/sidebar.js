@@ -8,12 +8,18 @@ let profile = {
   grad_expected: "Spring 2026",
   courses: [],   // loaded from user_courses.csv import
 };
+let plannedSchedule = null;  // AntAlmanac plan imported in Settings
 
 // ── Boot ───────────────────────────────────────────────────────
 
 (async () => {
-  const stored = await storageGet("profile");
+  const [stored, plan, sync] = await Promise.all([
+    storageGet("profile"), storageGet("plannedSchedule"), storageGet("antalmanacSync"),
+  ]);
   if (stored) profile = { ...profile, ...stored };
+  plannedSchedule = plan;
+  renderPlanSync(sync);
+  ZotlerAntAlmanacSync.sync();
   setupInput();
 })();
 
@@ -24,7 +30,25 @@ chrome.storage.onChanged.addListener((changes) => {
     profile = { ...profile, ...changes.profile.newValue };
     conversationHistory = [];
   }
+  if (changes.plannedSchedule) {
+    plannedSchedule = changes.plannedSchedule.newValue ?? null;
+    conversationHistory = [];
+  }
+  if (changes.antalmanacSync) renderPlanSync(changes.antalmanacSync.newValue);
 });
+
+// Re-sync planned classes whenever the panel is shown again
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") ZotlerAntAlmanacSync.sync();
+});
+
+// Status written by antalmanac-sync.js
+function renderPlanSync(sync) {
+  const el = document.getElementById("plan-sync");
+  const text = ZotlerAntAlmanacSync.describe(sync);
+  el.textContent = text ? `🗓️ ${text}` : "";
+  el.hidden = !text;
+}
 
 // ── Settings ───────────────────────────────────────────────────
 
@@ -152,6 +176,13 @@ function buildSystemPrompt() {
       }).join(", ")
     : "none imported yet — ask the student to import their transcript";
 
+  const planned = plannedSchedule
+    ? plannedSchedule.rows.filter(r => r.schedule_index === plannedSchedule.activeIndex && r.resolved)
+    : [];
+  const plannedList = planned.length
+    ? [...new Set(planned.map(r => `${normalizeCourseId(r.course_code)} (${r.term})`))].join(", ")
+    : "none imported";
+
   return `You are Zotler, a UCI academic planning assistant. Answer questions about the student's degree, courses, minors, and graduation timeline. Be concise and specific. Use plain text, with short paragraphs and simple lists. Do not output HTML.
 
 Student profile:
@@ -159,6 +190,7 @@ Student profile:
 - Minor: ${profile.minor ?? "none"}${profile.catalog_year ? `\n- Catalog year: ${profile.catalog_year}` : ""}
 - Expected graduation: ${profile.grad_expected}
 - Completed courses (${completed.length}): ${courseList}
+- Planned courses from AntAlmanac${plannedSchedule ? ` schedule "${plannedSchedule.schedules[plannedSchedule.activeIndex]}"` : ""}: ${plannedList}
 
 UCI degree requirements:
 ${REQUIREMENTS}
